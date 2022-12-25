@@ -1,0 +1,26 @@
+{
+  "name": "client-sdk",
+  "version": "1.0.0",
+  "description": "Implementing a client sdk to request our services and show the results to user",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/https-github-com-ali-moradzade/client-sdk.git"
+  },
+  "author": "Ali Moradzade",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/https-github-com-ali-moradzade/client-sdk/issues"
+  },
+  "homepage": "https://github.com/https-github-com-ali-moradzade/client-sdk#readme",
+  "dependencies": {
+    "@types/js-yaml": "^4.0.5",
+    "js-yaml": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.11.17"
+  }
+}

@@ -1,0 +1,13 @@
+main:
+  baseUrl: https://apibeta.finnotech.ir/
+  kind: facility
+
+services:
+  - name: cardToIban
+    method: get
+    parameters:
+      - trackId
+      - card
+      - version
+  - name: cardToDeposit
+    method: get
