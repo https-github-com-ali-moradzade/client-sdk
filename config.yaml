@@ -1,13 +1,11 @@
 main:
-  baseUrl: https://apibeta.finnotech.ir/
-  kind: facility
+  baseUrl: "https://api.staging.finnotech.ir"
 
 services:
-  - name: cardToIban
-    method: get
-    parameters:
-      - trackId
-      - card
-      - version
-  - name: cardToDeposit
-    method: get
+  - name: "billingInquiry"
+    url: "/billing/v2/clients/%s/billingInquiry"
+    method: "get"
+    payload:
+      parameter: string
+      secondParameter: string
+      type: string

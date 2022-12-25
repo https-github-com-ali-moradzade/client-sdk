@@ -4,7 +4,7 @@ import * as yaml from 'js-yaml';
 export class ClientSDK {
     private readonly yamlConfigFilePath = 'config.yaml';
 
-    constructor(private readonly client: string) {
+    constructor(private readonly clientUsername: string, private readonly clientPassword: string) {
         // Read config.yaml file
         try {
             let fileContents = fs.readFileSync('./config.yaml', 'utf8');
