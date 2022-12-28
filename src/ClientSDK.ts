@@ -44,8 +44,26 @@ export class ClientSDK {
         }
     }
 
+    static async getToken(
+        url: string,
+        header: { clientId: string; clientPassword: string },
+        body: {
+            grant_type: string; nid: string; scopes: string[]
+        }): Promise<string> {
 
-    async callService(serviceName: string, payload: any) {
+        const encodedHeader = Buffer.from(`${header.clientId}:${header.clientPassword}`).toString('base64');
+        try {
+            const {data} = await axios.post(url, body, {
+                headers: {Authorization: `Basic ${encodedHeader}`}
+            });
+
+            return data;
+        } catch (e) {
+            throw new Error(`Failed to get token from ${url} with error: ${(e as AxiosError).message}`);
+        }
+    }
+
+    async callService<T>(serviceName: string, payload: any) {
         console.log(`\nCalling service ${serviceName} ..`);
 
         const service = this.validate(serviceName, payload);
@@ -66,9 +84,9 @@ export class ClientSDK {
 
         // Call service, with axios
         if (service.method === 'get') {
-            return await this.handleGetRequest(service);
+            return await this.handleGetRequest(service) as T;
         } else if (service.method === 'post') {
-            return await this.handlePostRequest(service);
+            return await this.handlePostRequest(service) as T;
         }
     }
 

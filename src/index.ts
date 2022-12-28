@@ -6,8 +6,8 @@ async function main() {
     const clientSDK = new ClientSDK(Env.clientId);
 
     try {
-        const result = await clientSDK.callService('cardToIban', {
-            // trackId: uuid(),
+        const result = await clientSDK.callService<any>('cardToIban', {
+            trackId: uuid(),
             card: "6280231304985178",
             version: "2"
         })
