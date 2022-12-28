@@ -54,7 +54,10 @@ export class ClientSDK {
         if (service.method === 'get') {
             return await this.handleGetRequest(service, payload);
         } else if (service.method === 'post') {
-            return await this.handlePostRequest(service, payload);
+            const trackId = payload.trackId;
+            delete payload.trackId;
+
+            return await this.handlePostRequest(service, payload, trackId);
         }
     }
 
@@ -89,12 +92,13 @@ export class ClientSDK {
         return result;
     }
 
-    async handlePostRequest(service: Service, body: any) {
+    async handlePostRequest(service: Service, body: any, trackId: string) {
         let result;
 
         try {
             const {data} = await axios.post(service.url, body, {
-                headers: {Authorization: `Bearer ${this.bearerToken}`}
+                headers: {Authorization: `Bearer ${this.bearerToken}`},
+                params: {trackId}
             });
 
             result = data;

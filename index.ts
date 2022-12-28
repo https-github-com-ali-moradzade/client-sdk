@@ -16,8 +16,8 @@ async function main() {
     } catch (e) {
         console.error((e as Error).message);
     }
-    try {
 
+    try {
         const result = await clientSDK.callService('billingInquiry', {
             trackId: uuid(),
             type: "Tel",
@@ -30,6 +30,17 @@ async function main() {
         console.error((e as Error).message);
     }
 
+    try {
+        const result = await clientSDK.callService('mobileCardVerification', {
+            trackId: uuid(),
+            mobile: "09120000000",
+            card: "6280231304985178",
+        });
+
+        console.log(result)
+    } catch (e) {
+        console.error((e as Error).message);
+    }
 }
 
 main();

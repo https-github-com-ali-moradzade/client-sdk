@@ -10,6 +10,7 @@ services:
       trackId: string
       card: string
       version: string
+
   - name: "billingInquiry"
     url: "{address}/billing/v2/clients/{clientId}/billingInquiry"
     method: "get"
@@ -18,3 +19,11 @@ services:
       type: string
       parameter: string
       secondParameter: string
+
+  - name: "mobileCardVerification"
+    url: "{address}/kyc/v2/clients/{clientId}/mobileCardVerification"
+    method: "post"
+    payload:
+      trackId: string
+      mobile: string
+      card: string
