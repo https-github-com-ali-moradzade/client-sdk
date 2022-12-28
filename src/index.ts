@@ -7,7 +7,7 @@ async function main() {
 
     try {
         const result = await clientSDK.callService('cardToIban', {
-            trackId: uuid(),
+            // trackId: uuid(),
             card: "6280231304985178",
             version: "2"
         })

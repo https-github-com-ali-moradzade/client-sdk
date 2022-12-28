@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as yaml from 'js-yaml';
-import axios from "axios";
 import {Env} from "./Env";
+import axios, {AxiosError} from "axios";
 
 // Based on config.yaml file
 interface Service {
@@ -49,27 +49,26 @@ export class ClientSDK {
         console.log(`\nCalling service ${serviceName} ..`);
 
         const service = this.validate(serviceName, payload);
+        service.payload = payload;
+
         console.log('Service validated successfully ..');
         console.log(service);
 
         // Check for nid in the url
         if (service.url.includes('{nid}')) {
             // Get nid from user
-            const nid = payload.nid;
+            const nid = service.payload.nid;
             service.url = service.url.replace('{nid}', nid);
 
             // Remove nid from payload
-            delete payload.nid;
+            delete service.payload.nid;
         }
 
         // Call service, with axios
         if (service.method === 'get') {
-            return await this.handleGetRequest(service, payload);
+            return await this.handleGetRequest(service);
         } else if (service.method === 'post') {
-            const trackId = payload.trackId;
-            delete payload.trackId;
-
-            return await this.handlePostRequest(service, payload, trackId);
+            return await this.handlePostRequest(service);
         }
     }
 
@@ -79,15 +78,22 @@ export class ClientSDK {
             throw new Error(`Service ${serviceName} not found in config file`);
         }
 
-        // Check if payload is valid
-        if (JSON.stringify(Object.keys(payload)) !== JSON.stringify(Object.keys(ourService.payload))) {
+        // Check for required parameters
+        // trackId is optional in get, and required in post
+        const payloadKeys = Object.keys(payload);
+        if (ourService.method === 'get' && !payloadKeys.includes('trackId')) {
+            payloadKeys.unshift('trackId');
+        }
+
+        if (JSON.stringify(payloadKeys) !== JSON.stringify(Object.keys(ourService.payload))) {
             throw new Error(`Invalid payload for service: ${serviceName}`);
         }
 
         return ourService;
     }
 
-    async handleGetRequest(service: Service, uriParameters: any) {
+    async handleGetRequest(service: Service) {
+        const uriParameters = service.payload;
         let result;
 
         try {
@@ -98,13 +104,17 @@ export class ClientSDK {
 
             result = data;
         } catch (e) {
-            throw new Error(`Failed to call service ${service.name}: ${e.response.data.error.message}`);
+            throw new Error(`Failed to call service ${service.name}: ${e}`);
         }
 
         return result;
     }
 
-    async handlePostRequest(service: Service, body: any, trackId: string) {
+    async handlePostRequest(service: Service) {
+        const trackId = service.payload.trackId;
+        delete service.payload.trackId;
+        const body = service.payload;
+
         let result;
 
         try {
@@ -115,7 +125,7 @@ export class ClientSDK {
 
             result = data;
         } catch (e) {
-            throw new Error(`Failed to call service ${service.name}: ${e.response.data.error.message}`);
+            throw new Error(`Failed to call service ${service.name}: ${e}`);
         }
 
         return result;

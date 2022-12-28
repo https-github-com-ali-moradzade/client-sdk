@@ -1,5 +1,5 @@
 # Custom Env file
-Env.ts
+src/Env.ts
 Env.js
 
 # Typescript gitignore

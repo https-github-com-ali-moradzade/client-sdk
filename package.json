@@ -4,7 +4,9 @@
   "description": "Implementing a client sdk to request our services and show the results to user",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start:build": "tsc -W",
+    "start:run": "nodemon dest/index.js",
+    "start": "concurrently npm:start:*"
   },
   "repository": {
     "type": "git",
@@ -21,7 +23,9 @@
     "@types/js-yaml": "^4.0.5",
     "@types/uuid": "^9.0.0",
     "axios": "^1.2.1",
+    "concurrently": "^7.6.0",
     "js-yaml": "^4.1.0",
+    "nodemon": "^2.0.20",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
