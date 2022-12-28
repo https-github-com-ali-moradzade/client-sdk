@@ -52,6 +52,16 @@ export class ClientSDK {
         console.log('Service validated successfully ..');
         console.log(service);
 
+        // Check for nid in the url
+        if (service.url.includes('{nid}')) {
+            // Get nid from user
+            const nid = payload.nid;
+            service.url = service.url.replace('{nid}', nid);
+
+            // Remove nid from payload
+            delete payload.nid;
+        }
+
         // Call service, with axios
         if (service.method === 'get') {
             return await this.handleGetRequest(service, payload);

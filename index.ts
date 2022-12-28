@@ -41,6 +41,17 @@ async function main() {
     } catch (e) {
         console.error((e as Error).message);
     }
+
+    try {
+        const result = await clientSDK.callService('guarantyInquiry', {
+            trackId: uuid(),
+            nid: "4000329766"
+        });
+
+        console.log(result)
+    } catch (e) {
+        console.error((e as Error).message);
+    }
 }
 
 main();

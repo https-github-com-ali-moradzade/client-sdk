@@ -27,3 +27,10 @@ services:
       trackId: string
       mobile: string
       card: string
+
+  - name: "guarantyInquiry"
+    url: "{address}/credit/v2/clients/{clientId}/users/{nid}/guarantyInquiry"
+    method: "get"
+    payload:
+      trackId: string
+      nid: string
