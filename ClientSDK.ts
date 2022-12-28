@@ -38,7 +38,7 @@ export class ClientSDK {
                 this.config.services[i].url = this.config.services[i].url.replace('{address}', this.config.main.address);
             }
 
-            console.log(`Loaded config from ${this.yamlConfigFilePath} file successfully ..`);
+            console.log(`Config file loaded from ${this.yamlConfigFilePath} successfully ..`);
         } catch (e) {
             throw new Error(`Failed to load config from ${this.yamlConfigFilePath} file`);
         }
@@ -46,8 +46,10 @@ export class ClientSDK {
 
 
     async callService(serviceName: string, payload: any) {
+        console.log(`\nCalling service ${serviceName} ..`);
+
         const service = this.validate(serviceName, payload);
-        console.log('Our service validated successfully:');
+        console.log('Service validated successfully ..');
         console.log(service);
 
         // Call service, with axios
