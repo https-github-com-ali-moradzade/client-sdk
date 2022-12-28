@@ -48,13 +48,16 @@ export class ClientSDK {
         url: string,
         header: { clientId: string; clientPassword: string },
         body: {
-            grant_type: string; nid: string; scopes: string[]
+            grant_type: string; nid: string; scopes: string | string[];
         }): Promise<string> {
 
         const encodedHeader = Buffer.from(`${header.clientId}:${header.clientPassword}`).toString('base64');
         try {
             const {data} = await axios.post(url, body, {
-                headers: {Authorization: `Basic ${encodedHeader}`}
+                auth: {
+                    username: header.clientId,
+                    password: header.clientPassword
+                }
             });
 
             return data;
