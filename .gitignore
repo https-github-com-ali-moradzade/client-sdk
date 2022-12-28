@@ -1,3 +1,7 @@
+# Custom Env file
+Env.ts
+Env.js
+
 # Typescript gitignore
 lib-cov
 *.seed
@@ -8,6 +12,7 @@ lib-cov
 *.pid
 *.gz
 *.swp
+*.js
 
 pids
 logs

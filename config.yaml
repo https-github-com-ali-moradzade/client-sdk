@@ -2,6 +2,13 @@ main:
   baseUrl: "https://api.staging.finnotech.ir"
 
 services:
+  - name: "cardToIban"
+    url: "/facility/v2/clients/%s/cardToIban"
+    method: "get"
+    payload:
+      trackId: string
+      card: string
+      version: string
   - name: "billingInquiry"
     url: "/billing/v2/clients/%s/billingInquiry"
     method: "get"
