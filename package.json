@@ -19,6 +19,7 @@
   "dependencies": {
     "@types/dotenv": "^8.2.0",
     "@types/js-yaml": "^4.0.5",
+    "axios": "^1.2.1",
     "js-yaml": "^4.1.0"
   },
   "devDependencies": {
