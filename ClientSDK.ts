@@ -20,11 +20,16 @@ export class ClientSDK {
     private readonly yamlConfigFilePath = 'config.yaml';
     private readonly config: Config;
 
-    constructor(private readonly clientUsername: string, private readonly clientPassword: string) {
+    constructor(private readonly clientId: string, private readonly clientPassword: string) {
         // Read config.yaml file
         try {
             let fileContents = fs.readFileSync('./config.yaml', 'utf8');
             this.config = yaml.load(fileContents) as Config;
+
+            // Replace placeholders in config file
+            for (let i = 0; i < this.config.services.length; i++) {
+                this.config.services[i].url = this.config.services[i].url.replace('{clientId}', this.clientId);
+            }
 
             console.log(`Loaded config from ${this.yamlConfigFilePath} file successfully ..`);
         } catch (e) {
@@ -36,7 +41,7 @@ export class ClientSDK {
         // Call service
         const ourService = this.config.services.find(s => s.name === serviceName);
         if (ourService) {
-            console.log(`Calling ${ourService.method} ${ourService.url} with payload ${JSON.stringify(payload)}`);
+            console.log(ourService)
         } else {
             console.log(`Service ${serviceName} not found in config file`);
         }
