@@ -18,20 +18,27 @@ interface Config {
 
 export class ClientSDK {
     private readonly yamlConfigFilePath = 'config.yaml';
+    private readonly config: Config;
 
     constructor(private readonly clientUsername: string, private readonly clientPassword: string) {
-        console.log({clientUsername, clientPassword});
-
         // Read config.yaml file
         try {
             let fileContents = fs.readFileSync('./config.yaml', 'utf8');
-            let data = yaml.load(fileContents) as Config;
+            this.config = yaml.load(fileContents) as Config;
 
-            console.log(`Loaded config from ${this.yamlConfigFilePath}:`);
-            console.log(data);
-            console.log(data.services[0].payload);
+            console.log(`Loaded config from ${this.yamlConfigFilePath} file successfully ..`);
         } catch (e) {
             console.log(e);
+        }
+    }
+
+    callService(serviceName: string, payload: any) {
+        // Call service
+        const ourService = this.config.services.find(s => s.name === serviceName);
+        if (ourService) {
+            console.log(`Calling ${ourService.method} ${ourService.url} with payload ${JSON.stringify(payload)}`);
+        } else {
+            console.log(`Service ${serviceName} not found in config file`);
         }
     }
 }
