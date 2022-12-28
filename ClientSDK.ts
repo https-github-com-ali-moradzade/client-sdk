@@ -73,27 +73,35 @@ export class ClientSDK {
     }
 
     async handleGetRequest(service: Service, uriParameters: any) {
-        const {data, status} = await axios.get(service.url, {
-            headers: {Authorization: `Bearer ${this.bearerToken}`},
-            params: uriParameters
-        });
+        let result;
 
-        if (status !== 200) {
-            throw new Error(`Failed to call service ${service.name}`);
+        try {
+            const {data} = await axios.get(service.url, {
+                headers: {Authorization: `Bearer ${this.bearerToken}`},
+                params: uriParameters
+            });
+
+            result = data;
+        } catch (e) {
+            throw new Error(`Failed to call service ${service.name}: ${e.response.data.error.message}`);
         }
 
-        return data;
+        return result;
     }
 
-    async handlePostRequest(service: Service, body: any)  {
-        const {data, status} = await axios.post(service.url, body, {
-            headers: {Authorization: `Bearer ${this.bearerToken}`}
-        });
+    async handlePostRequest(service: Service, body: any) {
+        let result;
 
-        if (status !== 200) {
-            throw new Error(`Failed to call service ${service.name}`);
+        try {
+            const {data} = await axios.post(service.url, body, {
+                headers: {Authorization: `Bearer ${this.bearerToken}`}
+            });
+
+            result = data;
+        } catch (e) {
+            throw new Error(`Failed to call service ${service.name}: ${e.response.data.error.message}`);
         }
 
-        return data;
+        return result;
     }
 }
