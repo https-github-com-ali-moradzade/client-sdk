@@ -26,7 +26,7 @@ export class ClientSDK {
     private readonly config: Config;
     private readonly bearerToken = Env.bearerToken;
 
-    constructor(private readonly clientId: string, private readonly clientPassword: string,) {
+    constructor(private readonly clientId: string) {
         // Read config.yaml file
         try {
             let fileContents = fs.readFileSync('./config.yaml', 'utf8');
@@ -47,6 +47,8 @@ export class ClientSDK {
 
     async callService(serviceName: string, payload: any) {
         const service = this.validate(serviceName, payload);
+        console.log('Our service validated successfully:');
+        console.log(service);
 
         // Call service, with axios
         if (service.method === 'get') {
@@ -61,11 +63,10 @@ export class ClientSDK {
         if (!ourService) {
             throw new Error(`Service ${serviceName} not found in config file`);
         }
-        console.log(ourService)
 
         // Check if payload is valid
-        if (Object.keys(payload) !== Object.keys(ourService.payload)) {
-            throw new Error(`Invalid payload for service ${serviceName}`);
+        if (JSON.stringify(Object.keys(payload)) !== JSON.stringify(Object.keys(ourService.payload))) {
+            throw new Error(`Invalid payload for service: ${serviceName}`);
         }
 
         return ourService;
