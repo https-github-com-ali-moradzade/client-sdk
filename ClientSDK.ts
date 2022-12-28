@@ -4,7 +4,8 @@ import * as yaml from 'js-yaml';
 // Based on config.yaml file
 interface Config {
     main: {
-        baseUrl: string;
+        address: string;
+        sandboxAddress: string;
     },
     services: {
         name: string;
@@ -29,6 +30,7 @@ export class ClientSDK {
             // Replace placeholders in config file
             for (let i = 0; i < this.config.services.length; i++) {
                 this.config.services[i].url = this.config.services[i].url.replace('{clientId}', this.clientId);
+                this.config.services[i].url = this.config.services[i].url.replace('{address}', this.config.main.address);
             }
 
             console.log(`Loaded config from ${this.yamlConfigFilePath} file successfully ..`);
