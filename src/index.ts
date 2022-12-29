@@ -21,6 +21,7 @@ async function main() {
 
         console.log('Token:');
         console.log(token);
+        console.log()
     } catch (e) {
         console.log(e)
         console.error(e);

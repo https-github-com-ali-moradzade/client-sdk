@@ -1,6 +1,5 @@
-# Custom Env file
-src/Env.ts
-Env.js
+# dest folder, where our compiled js files will be placed
+dest
 
 # Typescript gitignore
 lib-cov

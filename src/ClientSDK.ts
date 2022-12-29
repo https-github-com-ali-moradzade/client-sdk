@@ -9,7 +9,7 @@ interface Service {
     url: string,
     method: string,
     payload: {
-        [p: string]: any
+        [p: string]: string
     }
 }
 
@@ -51,7 +51,6 @@ export class ClientSDK {
             grant_type: string; nid: string; scopes: string | string[];
         }): Promise<string> {
 
-        const encodedHeader = Buffer.from(`${header.clientId}:${header.clientPassword}`).toString('base64');
         try {
             const {data} = await axios.post(url, body, {
                 auth: {
@@ -77,7 +76,7 @@ export class ClientSDK {
 
         // Check for nid in the url
         if (service.url.includes('{nid}')) {
-            // Get nid from user
+            // Get nid from payload
             const nid = service.payload.nid;
             service.url = service.url.replace('{nid}', nid);
 
@@ -125,7 +124,7 @@ export class ClientSDK {
 
             result = data;
         } catch (e) {
-            throw new Error(`Failed to call service ${service.name}: ${e}`);
+            throw new Error(`Failed to call service ${service.name}: ${(e as AxiosError).message}`);
         }
 
         return result;
@@ -146,7 +145,7 @@ export class ClientSDK {
 
             result = data;
         } catch (e) {
-            throw new Error(`Failed to call service ${service.name}: ${e}`);
+            throw new Error(`Failed to call service ${service.name}: ${(e as AxiosError).message}`);
         }
 
         return result;
