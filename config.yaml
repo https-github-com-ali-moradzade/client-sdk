@@ -34,3 +34,11 @@ services:
     payload:
       trackId: string
       nid: string
+
+  - name: "token"
+    url: "{address}/dev/v2/oauth2/token"
+    method: "post"
+    payload:
+      grant_type: string
+      nid: string
+      scopes: string
