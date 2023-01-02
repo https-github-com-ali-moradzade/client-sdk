@@ -65,6 +65,7 @@ export class ClientSDK {
     }
 
     private async cacheToken(scope: string | string[]) {
+        console.log('Caching token ..');
         const response = await this.callService('token', {
             grant_type: 'client_credentials',
             nid: this.CLIENT_NID,
@@ -76,11 +77,12 @@ export class ClientSDK {
             status: string
         };
 
-        if (response.status !== 'success') {
+        if (response.status !== 'DONE') {
             throw new Error('Failed to get token from token service');
         }
 
         await this.setTokenInRedis(response.result.value);
+        console.log('Token cached successfully ..');
     }
 
     private async getTokenFromRedis() {
@@ -125,6 +127,17 @@ export class ClientSDK {
                 service.payload as { grant_type: string; nid: string; scopes: string; }
             );
         }
+
+        // axios.interceptors.response.use(response => {
+        //     return response;
+        // }, async (error) => {
+        //     if (error.response.status === 401 || error.response.status === 403) {
+        //         console.log('Token expired, getting new token ..');
+        //         await this.cacheToken(service.scope);
+        //     }
+        //     return error;
+        // });
+        await this.cacheToken(service.scope);
 
         if (service.method === 'get') {
             return await this.handleGetRequest(service);
