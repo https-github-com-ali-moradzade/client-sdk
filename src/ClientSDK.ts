@@ -35,10 +35,10 @@ export class ClientSDK {
             this.config = yaml.load(fileContents) as Config;
 
             // Replace placeholders in config file
-            for (let i = 0; i < this.config.services.length; i++) {
-                this.config.services[i].url = this.config.services[i].url.replace('{clientId}', this.CLIENT_ID);
-                this.config.services[i].url = this.config.services[i].url.replace('{address}', this.config.main.address);
-            }
+            this.config.services.map(service => {
+                service.url = service.url.replace('{clientId}', this.CLIENT_ID);
+                service.url = service.url.replace('{address}', this.config.main.address);
+            })
 
             console.log(`Config file loaded from ${this.yamlConfigFilePath} successfully ..`);
         } catch (e) {
@@ -94,7 +94,6 @@ export class ClientSDK {
         }
 
         // Call service, with axios
-
         // Token needs a separate call from other services
         if (serviceName == 'token') {
             return await ClientSDK.getToken(
