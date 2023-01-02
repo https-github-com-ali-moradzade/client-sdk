@@ -34,16 +34,16 @@ export class ClientSDK {
             let fileContents = fs.readFileSync(this.yamlConfigFilePath, 'utf8');
             this.config = yaml.load(fileContents) as Config;
 
-            // Replace placeholders in config file
-            this.config.services.map(service => {
-                service.url = service.url.replace('{clientId}', this.CLIENT_ID);
-                service.url = service.url.replace('{address}', this.config.main.address);
-            });
-
             console.log(`Config file loaded from ${this.yamlConfigFilePath} successfully ..`);
         } catch (e) {
             throw new Error(`Failed to load config from specified yaml file`);
         }
+
+        // Replace placeholders in config file
+        this.config.services.map(service => {
+            service.url = service.url.replace('{clientId}', this.CLIENT_ID);
+            service.url = service.url.replace('{address}', this.config.main.address);
+        });
 
         // Connect to redis
         if (redisUrl) {
@@ -62,41 +62,6 @@ export class ClientSDK {
                 console.log('Redis client connecting to localhost error: ', err);
             });
         }
-    }
-
-    private async cacheToken(scope: string | string[]) {
-        console.log('Caching token ..');
-        const response = await this.callService('token', {
-            grant_type: 'client_credentials',
-            nid: this.CLIENT_NID,
-            scopes: scope
-        }) as {
-            result: {
-                value: string
-            },
-            status: string
-        };
-
-        if (response.status !== 'DONE') {
-            throw new Error('Failed to get token from token service');
-        }
-
-        await this.setTokenInRedis(response.result.value);
-        console.log('Token cached successfully ..');
-    }
-
-    private async getTokenFromRedis() {
-        await this.redisClient.connect();
-        const token = await this.redisClient.get('bearerToken');
-        await this.redisClient.disconnect();
-
-        return token;
-    }
-
-    private async setTokenInRedis(token: string) {
-        await this.redisClient.connect();
-        await this.redisClient.set('bearerToken', token);
-        await this.redisClient.disconnect();
     }
 
     async callService(serviceName: string, payload: any) {
@@ -144,6 +109,41 @@ export class ClientSDK {
         } else if (service.method === 'post') {
             return await this.handlePostRequest(service);
         }
+    }
+
+    private async cacheToken(scope: string | string[]) {
+        console.log('Caching token ..');
+        const response = await this.callService('token', {
+            grant_type: 'client_credentials',
+            nid: this.CLIENT_NID,
+            scopes: scope
+        }) as {
+            result: {
+                value: string
+            },
+            status: string
+        };
+
+        if (response.status !== 'DONE') {
+            throw new Error('Failed to get token from token service');
+        }
+
+        await this.setTokenInRedis(response.result.value);
+        console.log('Token cached successfully ..');
+    }
+
+    private async getTokenFromRedis() {
+        await this.redisClient.connect();
+        const token = await this.redisClient.get('bearerToken');
+        await this.redisClient.disconnect();
+
+        return token;
+    }
+
+    private async setTokenInRedis(token: string) {
+        await this.redisClient.connect();
+        await this.redisClient.set('bearerToken', token);
+        await this.redisClient.disconnect();
     }
 
     private static async getToken(
