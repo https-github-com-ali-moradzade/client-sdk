@@ -93,19 +93,20 @@ export class ClientSDK {
             );
         }
 
-        // axios.interceptors.response.use(response => {
-        //     return response;
-        // }, async (error) => {
-        //     if (error.response.status === 401 || error.response.status === 403) {
-        //         console.log('Token expired, getting new token ..');
-        //         await this.cacheToken(service.scope);
-        //
-        //         // Retry request
-        //         error.config.headers.Authorization = `Bearer ${await this.getTokenFromRedis()}`;
-        //         return axios.request(error.config);
-        //     }
-        //     return error;
-        // });
+        axios.interceptors.response.use(response => {
+            return response;
+        }, async (error) => {
+            if (error.response.status === 400 || error.response.status === 401 || error.response.status === 403) {
+                console.log('Token expired, getting new token ..');
+                await this.cacheToken(service.scope);
+
+                // Retry request
+                error.config.headers.Authorization = `Bearer ${await this.getTokenFromRedis()}`;
+                return axios.request(error.config);
+            }
+            console.log(error);
+            return error;
+        });
         await this.cacheToken(service.scope);
 
         if (service.method === 'get') {
@@ -117,6 +118,7 @@ export class ClientSDK {
 
     private async cacheToken(scope: string | string[]) {
         console.log('Caching token ..');
+        console.log(`Creating a new token for scope: ${scope} ..`);
         const response = await this.callService('token', {
             grant_type: 'client_credentials',
             nid: this.CLIENT_NID,
