@@ -7,7 +7,7 @@ dotenv.config();
 
 async function main() {
     const clientSDK = new ClientSDK(process.env.CLIENT_ID || '',
-        process.env.CLIENT_PASSWORD || '');
+        process.env.CLIENT_PASSWORD || '', process.env.CLIENT_NID || '');
 
     // try {
     //     const token = await clientSDK.callService(
@@ -25,54 +25,54 @@ async function main() {
     //     console.log(e)
     //     console.error(e);
     // }
-    //
-    // try {
-    //     const result = await clientSDK.callService('cardToIban', {
-    //         trackId: uuid(),
-    //         card: "6280231304985178",
-    //         version: "2"
-    //     })
-    //
-    //     console.log(result);
-    // } catch (e) {
-    //     console.error((e as Error).message);
-    // }
-    //
-    // try {
-    //     const result = await clientSDK.callService('billingInquiry', {
-    //         trackId: uuid(),
-    //         type: "Tel",
-    //         parameter: "02177689361",
-    //         secondParameter: "MCI"
-    //     })
-    //
-    //     console.log(result)
-    // } catch (e) {
-    //     console.error((e as Error).message);
-    // }
-    //
-    // try {
-    //     const result = await clientSDK.callService('mobileCardVerification', {
-    //         trackId: uuid(),
-    //         mobile: "09120000000",
-    //         card: "6280231304985178",
-    //     });
-    //
-    //     console.log(result)
-    // } catch (e) {
-    //     console.error((e as Error).message);
-    // }
-    //
-    // try {
-    //     const result = await clientSDK.callService('guarantyInquiry', {
-    //         trackId: uuid(),
-    //         nid: "4000329766"
-    //     });
-    //
-    //     console.log(result)
-    // } catch (e) {
-    //     console.error((e as Error).message);
-    // }
+
+    try {
+        const result = await clientSDK.callService('cardToIban', {
+            trackId: uuid(),
+            card: "6280231304985178",
+            version: "2"
+        })
+
+        console.log(result);
+    } catch (e) {
+        console.error((e as Error).message);
+    }
+
+    try {
+        const result = await clientSDK.callService('billingInquiry', {
+            trackId: uuid(),
+            type: "Tel",
+            parameter: "02177689361",
+            secondParameter: "MCI"
+        })
+
+        console.log(result)
+    } catch (e) {
+        console.error((e as Error).message);
+    }
+
+    try {
+        const result = await clientSDK.callService('mobileCardVerification', {
+            trackId: uuid(),
+            mobile: "09120000000",
+            card: "6280231304985178",
+        });
+
+        console.log(result)
+    } catch (e) {
+        console.error((e as Error).message);
+    }
+
+    try {
+        const result = await clientSDK.callService('guarantyInquiry', {
+            trackId: uuid(),
+            nid: "4000329766"
+        });
+
+        console.log(result)
+    } catch (e) {
+        console.error((e as Error).message);
+    }
 }
 
 main();

@@ -7,6 +7,7 @@ import {createClient, RedisClientType} from 'redis';
 interface Service {
     name: string,
     url: string,
+    scope: string,
     method: string,
     payload: {
         [p: string]: string
@@ -25,10 +26,9 @@ export class ClientSDK {
     private readonly yamlConfigFilePath = __dirname + '/../config.yaml';
     private readonly config: Config;
     private redisClient: RedisClientType;
-    private bearerToken: string = '';
 
     constructor(private readonly CLIENT_ID: string, private readonly CLIENT_PASSWORD: string,
-                private readonly tokenRedisUrl?: string) {
+                private readonly CLIENT_NID: string, private readonly redisUrl?: string) {
         // Read config.yaml file
         try {
             let fileContents = fs.readFileSync(this.yamlConfigFilePath, 'utf8');
@@ -38,7 +38,7 @@ export class ClientSDK {
             this.config.services.map(service => {
                 service.url = service.url.replace('{clientId}', this.CLIENT_ID);
                 service.url = service.url.replace('{address}', this.config.main.address);
-            })
+            });
 
             console.log(`Config file loaded from ${this.yamlConfigFilePath} successfully ..`);
         } catch (e) {
@@ -46,32 +46,55 @@ export class ClientSDK {
         }
 
         // Connect to redis
-        if (tokenRedisUrl) {
+        if (redisUrl) {
+            console.log(`Connecting to redis at ${redisUrl} ..`);
             this.redisClient = createClient({
-                url: tokenRedisUrl
+                url: redisUrl
             });
 
             this.redisClient.on('error', (err) => {
-                console.log('Redis client connecting to specified url error: ', err)
+                console.log('Redis client connecting to specified url error: ', err);
             });
         } else {
-            console.log('No tokenRedisUrl provided, connecting to our local redis server');
+            console.log('No redis url provided, connecting to our local redis server ..');
             this.redisClient = createClient();
             this.redisClient.on('error', (err) => {
-                console.log('Redis client connecting to localhost error: ', err)
+                console.log('Redis client connecting to localhost error: ', err);
             });
         }
     }
 
-    private async getBearerToken(): Promise<string> {
-        // Get the bearer token from redis
-        const token = this.redisClient.get('bearerToken');
-        if (token !== null) {
-            console.log('Token not found in redis')
-            return '';
+    private async cacheToken(scope: string | string[]) {
+        const response = await this.callService('token', {
+            grant_type: 'client_credentials',
+            nid: this.CLIENT_NID,
+            scopes: scope
+        }) as {
+            result: {
+                value: string
+            },
+            status: string
+        };
+
+        if (response.status !== 'success') {
+            throw new Error('Failed to get token from token service');
         }
 
+        await this.setTokenInRedis(response.result.value);
+    }
+
+    private async getTokenFromRedis() {
+        await this.redisClient.connect();
+        const token = await this.redisClient.get('bearerToken');
+        await this.redisClient.disconnect();
+
         return token;
+    }
+
+    private async setTokenInRedis(token: string) {
+        await this.redisClient.connect();
+        await this.redisClient.set('bearerToken', token);
+        await this.redisClient.disconnect();
     }
 
     async callService(serviceName: string, payload: any) {
@@ -100,7 +123,7 @@ export class ClientSDK {
                 service.url,
                 {clientId: this.CLIENT_ID, clientPassword: this.CLIENT_PASSWORD},
                 service.payload as { grant_type: string; nid: string; scopes: string; }
-            )
+            );
         }
 
         if (service.method === 'get') {
@@ -157,7 +180,7 @@ export class ClientSDK {
 
         try {
             const {data} = await axios.get(service.url, {
-                headers: {Authorization: `Bearer ${this.bearerToken}`},
+                headers: {Authorization: `Bearer ${await this.getTokenFromRedis()}`},
                 params: uriParameters
             });
 
@@ -178,7 +201,7 @@ export class ClientSDK {
 
         try {
             const {data} = await axios.post(service.url, body, {
-                headers: {Authorization: `Bearer ${this.bearerToken}`},
+                headers: {Authorization: `Bearer ${await this.getTokenFromRedis()}`},
                 params: {trackId}
             });
 
