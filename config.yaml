@@ -5,6 +5,7 @@ main:
 services:
   - name: "cardToIban"
     url: "{address}/facility/v2/clients/{clientId}/cardToIban"
+    scope: "facility:card-to-iban:get"
     method: "get"
     payload:
       trackId: string
@@ -13,6 +14,7 @@ services:
 
   - name: "billingInquiry"
     url: "{address}/billing/v2/clients/{clientId}/billingInquiry"
+    scope: "billing:cc-inquiry:get"
     method: "get"
     payload:
       trackId: string
@@ -22,6 +24,7 @@ services:
 
   - name: "mobileCardVerification"
     url: "{address}/kyc/v2/clients/{clientId}/mobileCardVerification"
+    scope: "kyc:mobile-card-verification:post"
     method: "post"
     payload:
       trackId: string
@@ -30,6 +33,7 @@ services:
 
   - name: "guarantyInquiry"
     url: "{address}/credit/v2/clients/{clientId}/users/{nid}/guarantyInquiry"
+    scope: "credit:cc-guaranty-inquiry:get"
     method: "get"
     payload:
       trackId: string
@@ -37,6 +41,7 @@ services:
 
   - name: "token"
     url: "{address}/dev/v2/oauth2/token"
+    scope: ""
     method: "post"
     payload:
       grant_type: string
