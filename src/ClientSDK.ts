@@ -22,7 +22,7 @@ interface Config {
 }
 
 export class ClientSDK {
-    private readonly yamlConfigFilePath = 'config.yaml';
+    private readonly yamlConfigFilePath = __dirname + '/../config.yaml';
     private readonly config: Config;
     private redisClient: RedisClientType;
     private bearerToken: string = '';
@@ -31,7 +31,7 @@ export class ClientSDK {
                 private readonly tokenRedisUrl?: string) {
         // Read config.yaml file
         try {
-            let fileContents = fs.readFileSync('./config.yaml', 'utf8');
+            let fileContents = fs.readFileSync(this.yamlConfigFilePath, 'utf8');
             this.config = yaml.load(fileContents) as Config;
 
             // Replace placeholders in config file
@@ -42,7 +42,7 @@ export class ClientSDK {
 
             console.log(`Config file loaded from ${this.yamlConfigFilePath} successfully ..`);
         } catch (e) {
-            throw new Error(`Failed to load config from ${this.yamlConfigFilePath} file`);
+            throw new Error(`Failed to load config from specified yaml file`);
         }
 
         // Connect to redis
