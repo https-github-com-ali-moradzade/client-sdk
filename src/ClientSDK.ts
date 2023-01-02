@@ -71,7 +71,6 @@ export class ClientSDK {
         service.payload = payload;
 
         console.log('Service validated successfully ..');
-        console.log(service);
 
         // Check for nid in the url
         if (service.url.includes('{nid}')) {
@@ -82,6 +81,7 @@ export class ClientSDK {
             // Remove nid from payload
             delete service.payload.nid;
         }
+        console.log(service);
 
         // Call service, with axios
         // Token needs a separate call from other services
@@ -99,6 +99,10 @@ export class ClientSDK {
         //     if (error.response.status === 401 || error.response.status === 403) {
         //         console.log('Token expired, getting new token ..');
         //         await this.cacheToken(service.scope);
+        //
+        //         // Retry request
+        //         error.config.headers.Authorization = `Bearer ${await this.getTokenFromRedis()}`;
+        //         return axios.request(error.config);
         //     }
         //     return error;
         // });
