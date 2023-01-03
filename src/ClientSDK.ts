@@ -58,6 +58,7 @@ export class ClientSDK {
         } else {
             console.log('No redis url provided, connecting to our local redis server ..');
             this.redisClient = createClient();
+
             this.redisClient.on('error', (err) => {
                 console.log('Redis client connecting to localhost error: ', err);
             });
@@ -97,17 +98,22 @@ export class ClientSDK {
             return response;
         }, async (error) => {
             if (error.response.status === 400 || error.response.status === 401 || error.response.status === 403) {
-                console.log('Token expired, getting new token ..');
+                if (error.response.status === 400)
+                    console.log(`No token stored for this key [${service.scope}], getting a new one ..`);
+                else
+                    console.log('Token expired, getting new token ..');
+
                 await this.cacheToken(service.scope);
 
                 // Retry request
-                error.config.headers.Authorization = `Bearer ${await this.getTokenFromRedis()}`;
+                error.config.headers.Authorization = `Bearer ${await this.getTokenFromRedis(service.scope)}`;
                 return axios.request(error.config);
             }
-            console.log(error);
+            console.log(`Error calling service: ${serviceName} with error: ${error.message}:`);
+            console.log(error.config);
+
             return error;
         });
-        await this.cacheToken(service.scope);
 
         if (service.method === 'get') {
             return await this.handleGetRequest(service);
@@ -134,21 +140,21 @@ export class ClientSDK {
             throw new Error('Failed to get token from token service');
         }
 
-        await this.setTokenInRedis(response.result.value);
+        await this.setTokenInRedis(scope, response.result.value);
         console.log('Token cached successfully ..');
     }
 
-    private async getTokenFromRedis() {
+    private async getTokenFromRedis(scope: string | string[]) {
         await this.redisClient.connect();
-        const token = await this.redisClient.get('bearerToken');
+        const token = await this.redisClient.get(scope.toString());
         await this.redisClient.disconnect();
 
         return token;
     }
 
-    private async setTokenInRedis(token: string) {
+    private async setTokenInRedis(scope: string | string[], token: string) {
         await this.redisClient.connect();
-        await this.redisClient.set('bearerToken', token);
+        await this.redisClient.set(scope.toString(), token);
         await this.redisClient.disconnect();
     }
 
@@ -197,9 +203,16 @@ export class ClientSDK {
         const uriParameters = service.payload;
         let result;
 
+        let token = await this.getTokenFromRedis(service.scope);
+        while (!token) {
+            console.log(`No token stored for this key [${service.scope}], getting a new one ..`);
+            await this.cacheToken(service.scope);
+            token = await this.getTokenFromRedis(service.scope);
+        }
+
         try {
             const {data} = await axios.get(service.url, {
-                headers: {Authorization: `Bearer ${await this.getTokenFromRedis()}`},
+                headers: {Authorization: `Bearer ${token}`},
                 params: uriParameters
             });
 
@@ -217,10 +230,16 @@ export class ClientSDK {
         const body = service.payload;
 
         let result;
+        let token = await this.getTokenFromRedis(service.scope);
+        while (!token) {
+            console.log(`No token stored for this key [${service.scope}], getting a new one ..`);
+            await this.cacheToken(service.scope);
+            token = await this.getTokenFromRedis(service.scope);
+        }
 
         try {
             const {data} = await axios.post(service.url, body, {
-                headers: {Authorization: `Bearer ${await this.getTokenFromRedis()}`},
+                headers: {Authorization: `Bearer ${token}`},
                 params: {trackId}
             });
 
