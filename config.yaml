@@ -136,3 +136,48 @@ services:
     payload:
       trackId: string
       card: string
+
+  # Services based on credit
+  # TODO: Note: loanId in url, i did not handle this in client sdk code
+  - name: "loans"
+    url: "{address}/credit/v2/clients/{clientId}/loans/{loanId}?trackId={trackId}"
+    scope: "credit:loan-info:get"
+    method: "get"
+    payload:
+      trackId: string
+      loanId: string
+
+  - name: "guaranteeCollaterals"
+    url: "{address}/credit/v2/clients/{clientId}/guaranteeCollaterals?trackId={trackId}&guaranteeId={guaranteeId}"
+    scope: "credit:guarantee-collaterals:get"
+    method: "get"
+    payload:
+      trackId: string
+      guaranteeId: string
+
+  - name: "guaranteeDetails"
+    url: "{address}/credit/v2/clients/{clientId}/guaranteeDetails?trackId={trackId}&guaranteeId={guaranteeId"
+    scope: "credit:guarantee-details:get"
+    method: "get"
+    payload:
+      trackId: string
+      guaranteeId: string
+
+  # What is this, has two versions!
+  #  - name: "scoreReport"
+  #    url: "{address}/credit/v2/clients/{clientId}/scoreReport/send?trackId={trackId}"
+  #    scope: "credit:score-request:post"
+  #    method: "post"
+  #    payload:
+  #      trackId: string
+  #      realPersonNationalCode: string
+  #      mobileNumber: string
+  #      legalPersonNationalCode: string
+
+  - name: "macnaInquiry"
+    url: "{address}/credit/v2/clients/{clientId}/macnaInquiry?trackId={trackId}&nationalCode={nationalCode}"
+    scope: "credit:macna-inquiry:get"
+    method: "get"
+    payload:
+      trackId: string
+      nationalCode: string
