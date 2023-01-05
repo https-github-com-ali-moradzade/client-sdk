@@ -6,7 +6,9 @@
   "scripts": {
     "start:build": "tsc -W",
     "start:run": "nodemon dest/index.js",
-    "start": "concurrently npm:start:*"
+    "start": "concurrently npm:start:*",
+    "test": "vitest --run --reporter verbose",
+    "test:watch": "vitest"
   },
   "repository": {
     "type": "git",
@@ -28,7 +30,8 @@
     "js-yaml": "^4.1.0",
     "nodemon": "^2.0.20",
     "redis": "^4.5.1",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "vitest": "^0.26.3"
   },
   "devDependencies": {
     "@types/node": "^18.11.17",
