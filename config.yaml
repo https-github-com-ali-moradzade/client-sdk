@@ -126,3 +126,13 @@ services:
     payload:
       trackId: string
       accountNumber: string
+
+  # Services based on card
+  # TODO: Note: card is in url, i did not handle this in client sdk code
+  - name: "cards"
+    url: "{address}/mpg/v2/clients/{clientId}/cards/{card}?trackId={trackId}"
+    scope: "card:information:get"
+    method: ""
+    payload:
+      trackId: string
+      card: string
