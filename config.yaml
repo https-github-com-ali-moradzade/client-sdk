@@ -3,6 +3,15 @@ main:
   sandboxAddress: "https://sandboxapi.finnotech.ir"
 
 services:
+  # Template for each service
+  #  - name: ""
+  #    url: ""
+  #    scope: ""
+  #    method: ""
+  #    payload:
+  #      trackId: string
+
+  # Our custom services for testing
   - name: "cardToIban"
     url: "{address}/facility/v2/clients/{clientId}/cardToIban"
     scope: "facility:card-to-iban:get"
@@ -47,3 +56,73 @@ services:
       grant_type: string
       nid: string
       scopes: string
+
+  # From first 25 Services [Client Credential ones]
+  - name: "balance"
+    url: "{address}/oak/v2/clients/{clientId}/card/balance"
+    scope: "oak:card-balance:get"
+    method: "post"
+    payload:
+      trackId: string
+      card: string
+
+  - name: "statement"
+    url: "{address}/oak/v2/clients/{clientId}/card/statement"
+    scope: "oak:card-statement:get"
+    method: "post"
+    payload:
+      trackId: string
+      card: string
+      fromDate: string
+      toDate: string
+
+  - name: "iban"
+    url: "{address}/oak/v2/clients/{clientId}/iban"
+    scope: "oak:deposit-to-iban:get"
+    method: "get"
+    payload:
+      trackId: string
+      bank: string
+      deposit: string
+
+  - name: "ibanInquiry"
+    url: "{address}/oak/v2/clients/{clientId}/ibanInquiry"
+    scope: "oak:iban-inquiry:get"
+    method: "get"
+    payload:
+      trackId: string
+      iban: string
+
+  - name: "groupIbanInquiry"
+    url: "{address}/oak/v2/clients/{clientId}/groupIbanInquiry"
+    scope: "oak:group-iban-inquiry:post"
+    method: "post"
+    payload:
+      trackId: string
+      ibansFile: string
+      retry: string
+      inquiryTrackId: string
+
+  - name: "cifInquiry"
+    url: "{address}/oak/v2/clients/{clientId}/users/{nid}/cifInquiry"
+    scope: "oak:cif-inquiry:get"
+    method: "get"
+    payload:
+      trackId: string
+      nid: string
+
+  - name: "blacklistInquiry"
+    url: "{address}/oak/v2/clients/{clientId}/blacklistInquiry"
+    scope: "oak:blacklist-inquiry:get"
+    method: "get"
+    payload:
+      trackId: string
+      nid: string
+
+  - name: "proxyAccountInquiry"
+    url: "{address}/oak/v2/clients/{clientId}/proxyAccountInquiry"
+    scope: "oak:proxy-account-inquiry:execute"
+    method: "get"
+    payload:
+      trackId: string
+      accountNumber: string
