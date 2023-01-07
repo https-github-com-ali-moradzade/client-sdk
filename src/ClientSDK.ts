@@ -212,20 +212,14 @@ export class ClientSDK {
     }
 
     async handleGetRequest(service: Service) {
-        const uriParameters = service.payload;
+        const params = service.payload;
+        const token = await this.getValidToken(service.scope);
         let result;
-
-        let token = await ClientSDK.getTokenFromRedis(this.redisClient, service.scope);
-        while (!token) {
-            console.log(`No token stored for this key [${service.scope}], getting a new one ..`);
-            await this.cacheToken(service.scope);
-            token = await ClientSDK.getTokenFromRedis(this.redisClient, service.scope);
-        }
 
         try {
             const {data} = await axios.get(service.url, {
                 headers: {Authorization: `Bearer ${token}`},
-                params: uriParameters
+                params: params
             });
 
             result = data;
@@ -239,18 +233,13 @@ export class ClientSDK {
     async handlePostRequest(service: Service) {
         const trackId = service.payload.trackId;
         delete service.payload.trackId;
-        const body = service.payload;
 
+        const params = service.payload;
+        const token = await this.getValidToken(service.scope);
         let result;
-        let token = await ClientSDK.getTokenFromRedis(this.redisClient, service.scope);
-        while (!token) {
-            console.log(`No token stored for this key [${service.scope}], getting a new one ..`);
-            await this.cacheToken(service.scope);
-            token = await ClientSDK.getTokenFromRedis(this.redisClient, service.scope);
-        }
 
         try {
-            const {data} = await axios.post(service.url, body, {
+            const {data} = await axios.post(service.url, params, {
                 headers: {Authorization: `Bearer ${token}`},
                 params: {trackId}
             });
@@ -261,5 +250,17 @@ export class ClientSDK {
         }
 
         return result;
+    }
+
+    private async getValidToken(scope: string) {
+        let token = await ClientSDK.getTokenFromRedis(this.redisClient, scope);
+
+        while (!token) {
+            console.log(`No token stored for this key [${scope}], getting a new one ..`);
+            await this.cacheToken(scope);
+            token = await ClientSDK.getTokenFromRedis(this.redisClient, scope);
+        }
+
+        return token;
     }
 }
