@@ -25,19 +25,12 @@ interface Config {
 export class ClientSDK {
     private readonly yamlConfigFilePath = __dirname + '/../config.yaml';
     private readonly config: Config;
-    private redisClient: RedisClientType;
+    private redisClient: RedisClientType = createClient();
 
     constructor(private readonly CLIENT_ID: string, private readonly CLIENT_PASSWORD: string,
                 private readonly CLIENT_NID: string, private readonly redisUrl?: string) {
         // Read config.yaml file
-        try {
-            let fileContents = fs.readFileSync(this.yamlConfigFilePath, 'utf8');
-            this.config = yaml.load(fileContents) as Config;
-
-            console.log(`Config file loaded from ${this.yamlConfigFilePath} successfully ..`);
-        } catch (e) {
-            throw new Error(`Failed to load config from specified yaml file`);
-        }
+        this.config = ClientSDK.readYamlFile(this.yamlConfigFilePath) as Config;
 
         // Replace placeholders in config file
         this.config.services.map(service => {
@@ -46,23 +39,42 @@ export class ClientSDK {
         });
 
         // Connect to redis
+        this.redisClient = ClientSDK.connectToRedis(this.redisUrl);
+    }
+
+    private static readYamlFile(filePath: string) {
+        try {
+            let fileContents = fs.readFileSync(filePath, 'utf8');
+
+            console.log(`Config file loaded from ${filePath} successfully ..`);
+            return yaml.load(fileContents) as Config;
+        } catch (e) {
+            throw new Error(`Failed to load config from specified yaml file`);
+        }
+    }
+
+    private static connectToRedis(redisUrl: string | undefined) {
+        let redisClient: RedisClientType;
+
         if (redisUrl) {
             console.log(`Connecting to redis at ${redisUrl} ..`);
-            this.redisClient = createClient({
+            redisClient = createClient({
                 url: redisUrl
             });
 
-            this.redisClient.on('error', (err) => {
+            redisClient.on('error', (err) => {
                 console.log('Redis client connecting to specified url error: ', err);
             });
         } else {
             console.log('No redis url provided, connecting to our local redis server ..');
-            this.redisClient = createClient();
+            redisClient = createClient();
 
-            this.redisClient.on('error', (err) => {
+            redisClient.on('error', (err) => {
                 console.log('Redis client connecting to localhost error: ', err);
             });
         }
+
+        return redisClient;
     }
 
     async callService(serviceName: string, payload: any) {
