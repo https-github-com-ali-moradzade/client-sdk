@@ -39,27 +39,49 @@ describe('Unit tests', () => {
             });
         })
     });
-});
 
-describe('getTokenFromRedis() & setTokenInRedis()', () => {
-    describe('getTokenFromRedis()', () => {
-        it('should return null if no token found in redis', async () => {
-            // Arrange
-            // @ts-ignore
-            const redisClient = ClientSDK.connectToRedis(undefined);
-            const key = 'no-token-key';
+    describe('getTokenFromRedis() & setTokenInRedis()', () => {
+        describe('getTokenFromRedis()', () => {
+            it('should return null if no token found in redis', async () => {
+                // Arrange
+                // @ts-ignore
+                const redisClient = ClientSDK.connectToRedis(undefined);
+                const key = 'no-token-key';
 
-            // Act
-            // @ts-ignore
-            const result = await ClientSDK.getTokenFromRedis(redisClient, key);
+                // Act
+                // @ts-ignore
+                const result = await ClientSDK.getTokenFromRedis(redisClient, key);
 
-            // Assert
-            expect(result).toBeNull();
+                // Assert
+                expect(result).toBeNull();
+            });
         });
-    });
 
-    describe('setTokenInRedis()', () => {
-        it('should set token in redis', async () => {
+        describe('setTokenInRedis()', () => {
+            it('should set token in redis', async () => {
+                // Arrange
+                // @ts-ignore
+                const redisClient = ClientSDK.connectToRedis(undefined);
+                const key = 'token';
+                const value = 'token';
+
+                // Act
+                // Delete key if exists
+                await redisClient.connect();
+                await redisClient.del(key);
+                await redisClient.disconnect();
+
+                // @ts-ignore
+                await ClientSDK.setTokenInRedis(redisClient, key, value);
+                // @ts-ignore
+                const result = await ClientSDK.getTokenFromRedis(redisClient, key);
+
+                // Assert
+                expect(result).toBe(value);
+            });
+        });
+
+        it('should get a key if already stored in redis', async () => {
             // Arrange
             // @ts-ignore
             const redisClient = ClientSDK.connectToRedis(undefined);
@@ -67,11 +89,6 @@ describe('getTokenFromRedis() & setTokenInRedis()', () => {
             const value = 'token';
 
             // Act
-            // Delete key if exists
-            await redisClient.connect();
-            await redisClient.del(key);
-            await redisClient.disconnect();
-
             // @ts-ignore
             await ClientSDK.setTokenInRedis(redisClient, key, value);
             // @ts-ignore
@@ -81,24 +98,7 @@ describe('getTokenFromRedis() & setTokenInRedis()', () => {
             expect(result).toBe(value);
         });
     });
-
-    it('should get a key if already stored in redis', async () => {
-        // Arrange
-        // @ts-ignore
-        const redisClient = ClientSDK.connectToRedis(undefined);
-        const key = 'token';
-        const value = 'token';
-
-        // Act
-        // @ts-ignore
-        await ClientSDK.setTokenInRedis(redisClient, key, value);
-        // @ts-ignore
-        const result = await ClientSDK.getTokenFromRedis(redisClient, key);
-
-        // Assert
-        expect(result).toBe(value);
-    });
-})
+});
 
 let clientSDK: ClientSDK;
 
