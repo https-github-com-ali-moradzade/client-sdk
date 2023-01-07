@@ -25,7 +25,7 @@ interface Config {
 export class ClientSDK {
     private readonly yamlConfigFilePath = __dirname + '/../config.yaml';
     private readonly config: Config;
-    private redisClient: RedisClientType = createClient();
+    private readonly redisClient: RedisClientType = createClient();
 
     constructor(private readonly CLIENT_ID: string, private readonly CLIENT_PASSWORD: string,
                 private readonly CLIENT_NID: string, private readonly redisUrl?: string) {
@@ -118,7 +118,7 @@ export class ClientSDK {
                 await this.cacheToken(service.scope);
 
                 // Retry request
-                error.config.headers.Authorization = `Bearer ${await this.getTokenFromRedis(service.scope)}`;
+                error.config.headers.Authorization = `Bearer ${await ClientSDK.getTokenFromRedis(this.redisClient, service.scope)}`;
                 return axios.request(error.config);
             }
             console.log(`Error calling service: ${serviceName} with error: ${error.message}:`);
@@ -152,22 +152,22 @@ export class ClientSDK {
             throw new Error('Failed to get token from token service');
         }
 
-        await this.setTokenInRedis(scope, response.result.value);
+        await ClientSDK.setTokenInRedis(this.redisClient, scope, response.result.value);
         console.log('Token cached successfully ..');
     }
 
-    private async getTokenFromRedis(scope: string | string[]) {
-        await this.redisClient.connect();
-        const token = await this.redisClient.get(scope.toString());
-        await this.redisClient.disconnect();
+    private static async getTokenFromRedis(redisClient: RedisClientType, scope: string | string[]) {
+        await redisClient.connect();
+        const token = await redisClient.get(scope.toString());
+        await redisClient.disconnect();
 
         return token;
     }
 
-    private async setTokenInRedis(scope: string | string[], token: string) {
-        await this.redisClient.connect();
-        await this.redisClient.set(scope.toString(), token);
-        await this.redisClient.disconnect();
+    private static async setTokenInRedis(redisClient: RedisClientType, scope: string | string[], token: string) {
+        await redisClient.connect();
+        await redisClient.set(scope.toString(), token);
+        await redisClient.disconnect();
     }
 
     private static async getToken(
@@ -215,11 +215,11 @@ export class ClientSDK {
         const uriParameters = service.payload;
         let result;
 
-        let token = await this.getTokenFromRedis(service.scope);
+        let token = await ClientSDK.getTokenFromRedis(this.redisClient, service.scope);
         while (!token) {
             console.log(`No token stored for this key [${service.scope}], getting a new one ..`);
             await this.cacheToken(service.scope);
-            token = await this.getTokenFromRedis(service.scope);
+            token = await ClientSDK.getTokenFromRedis(this.redisClient, service.scope);
         }
 
         try {
@@ -242,11 +242,11 @@ export class ClientSDK {
         const body = service.payload;
 
         let result;
-        let token = await this.getTokenFromRedis(service.scope);
+        let token = await ClientSDK.getTokenFromRedis(this.redisClient, service.scope);
         while (!token) {
             console.log(`No token stored for this key [${service.scope}], getting a new one ..`);
             await this.cacheToken(service.scope);
-            token = await this.getTokenFromRedis(service.scope);
+            token = await ClientSDK.getTokenFromRedis(this.redisClient, service.scope);
         }
 
         try {
