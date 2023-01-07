@@ -5,6 +5,42 @@ import * as dotenv from 'dotenv';
 import {v4 as uuid} from 'uuid';
 
 dotenv.config();
+
+describe('Unit tests', () => {
+    describe('constructor', () => {
+        describe('readYamlFile', () => {
+            it('should throw an error if invalid yaml file path provided', () => {
+                // Arrange
+                const invalidYamlFilePath = 'invalid/path/to/yaml/file';
+                const errorMessage = `Failed to load config from specified yaml file`;
+
+                // Act
+                const resultFunction = () => {
+                    // @ts-ignore
+                    ClientSDK.readYamlFile(invalidYamlFilePath);
+                }
+
+                // Assert
+                expect(resultFunction).toThrowError(errorMessage);
+            });
+
+            it('should correctly read yaml file is path is valid', () => {
+                // Arrange
+                const validYamlFilePath = './config.yaml';
+
+                // Act
+                // @ts-ignore
+                const result = ClientSDK.readYamlFile(validYamlFilePath);
+
+                // Assert
+                expect(result).toBeDefined();
+                expect(result).hasOwnProperty('main');
+                expect(result).hasOwnProperty('services');
+            });
+        })
+    });
+});
+
 let clientSDK: ClientSDK;
 
 it("should be able to create a ClientSDK instance", () => {
