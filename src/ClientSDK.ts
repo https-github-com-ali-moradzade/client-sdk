@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as yaml from 'js-yaml';
+import * as Logger from 'bunyan';
 import axios, {AxiosError} from "axios";
 import {createClient, RedisClientType} from 'redis';
 
@@ -26,6 +27,21 @@ export class ClientSDK {
     private readonly yamlConfigFilePath = __dirname + '/../config.yaml';
     private readonly config: Config;
     private readonly redisClient: RedisClientType = createClient();
+    private readonly logger = Logger.createLogger({
+        name: 'ClientSDK',
+        streams: [
+            {
+                level: 'info',
+                // stream: process.stdout,
+                path: 'logs/ClientSDK.info.log',
+            },
+            {
+                level: 'error',
+                // stream: process.stderr,
+                path: 'logs/ClientSDK.info.log',
+            }
+        ]
+    });
 
     constructor(private readonly CLIENT_ID: string, private readonly CLIENT_PASSWORD: string,
                 private readonly CLIENT_NID: string, private readonly redisUrl?: string) {
@@ -42,35 +58,41 @@ export class ClientSDK {
         this.redisClient = ClientSDK.connectToRedis(this.redisUrl);
     }
 
-    private static readYamlFile(filePath: string) {
+    private static readYamlFile(filePath: string, logger?: Logger) {
         try {
             let fileContents = fs.readFileSync(filePath, 'utf8');
 
-            console.log(`Config file loaded from ${filePath} successfully ..`);
+            if (logger)
+                logger.info(`Config file loaded from ${filePath} successfully ..`)
+
             return yaml.load(fileContents) as Config;
         } catch (e) {
             throw new Error(`Failed to load config from specified yaml file`);
         }
     }
 
-    private static connectToRedis(redisUrl: string | undefined) {
+    private static connectToRedis(redisUrl: string | undefined, logger?: Logger) {
         let redisClient: RedisClientType;
 
         if (redisUrl) {
-            console.log(`Connecting to redis at ${redisUrl} ..`);
+            if (logger)
+                logger.info(`Connecting to redis at ${redisUrl} ..`);
             redisClient = createClient({
                 url: redisUrl
             });
 
             redisClient.on('error', (err) => {
-                console.log('Redis client connecting to specified url error: ', err);
+                if (logger)
+                    logger.error(err, `Redis client connecting to specified url`);
             });
         } else {
-            console.log('No redis url provided, connecting to our local redis server ..');
+            if (logger)
+                logger.info('No redis url provided, connecting to our local redis server ..');
             redisClient = createClient();
 
             redisClient.on('error', (err) => {
-                console.log('Redis client connecting to localhost error: ', err);
+                if (logger)
+                    logger.error(err, 'Redis client connecting to localhost error: ');
             });
         }
 
@@ -78,12 +100,13 @@ export class ClientSDK {
     }
 
     async callService(serviceName: string, payload: any) {
-        console.log(`\nCalling service ${serviceName} ..`);
+        this.logger.info(`Calling service ${serviceName} ..`);
 
         const service = this.validate(serviceName, payload);
         service.payload = payload;
 
-        console.log('Service validated successfully ..');
+
+        this.logger.info('Service validated successfully ..')
 
         // Check for nid in the url
         if (service.url.includes('{nid}')) {
@@ -94,7 +117,9 @@ export class ClientSDK {
             // Remove nid from payload
             delete service.payload.nid;
         }
-        console.log(service);
+        this.logger.info({
+            service: service
+        }, 'Service url and payload are ready ..');
 
         // Call service, with axios
         // Token needs a separate call from other services
@@ -111,9 +136,9 @@ export class ClientSDK {
         }, async (error) => {
             if (error.response.status === 400 || error.response.status === 401 || error.response.status === 403) {
                 if (error.response.status === 400)
-                    console.log(`No token stored for this key [${service.scope}], getting a new one ..`);
+                    this.logger.info(`No token stored for this key [${service.scope}], getting a new one ..`);
                 else
-                    console.log('Token expired, getting new token ..');
+                    this.logger.info('Token expired, getting new token ..');
 
                 await this.cacheToken(service.scope);
 
@@ -121,8 +146,7 @@ export class ClientSDK {
                 error.config.headers.Authorization = `Bearer ${await ClientSDK.getTokenFromRedis(this.redisClient, service.scope)}`;
                 return axios.request(error.config);
             }
-            console.log(`Error calling service: ${serviceName} with error: ${error.message}:`);
-            console.log(error.config);
+            this.logger.error(error, `Error calling service: ${serviceName}`);
 
             return error;
         });
@@ -135,8 +159,8 @@ export class ClientSDK {
     }
 
     private async cacheToken(scope: string | string[]) {
-        console.log('Caching token ..');
-        console.log(`Creating a new token for scope: ${scope} ..`);
+        this.logger.info('Caching token ..');
+        this.logger.info(`Creating a new token for scope: ${scope} ..`);
         const response = await this.callService('token', {
             grant_type: 'client_credentials',
             nid: this.CLIENT_NID,
@@ -153,7 +177,7 @@ export class ClientSDK {
         }
 
         await ClientSDK.setTokenInRedis(this.redisClient, scope, response.result.value);
-        console.log('Token cached successfully ..');
+        this.logger.info('Token cached successfully ..');
     }
 
     private static async getTokenFromRedis(redisClient: RedisClientType, scope: string | string[]) {
@@ -256,7 +280,7 @@ export class ClientSDK {
         let token = await ClientSDK.getTokenFromRedis(this.redisClient, scope);
 
         while (!token) {
-            console.log(`No token stored for this key [${scope}], getting a new one ..`);
+            this.logger.info(`No token stored for this key [${scope}], getting a new one ..`);
             await this.cacheToken(scope);
             token = await ClientSDK.getTokenFromRedis(this.redisClient, scope);
         }
