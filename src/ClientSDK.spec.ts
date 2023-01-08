@@ -1,14 +1,15 @@
-import {it, expect, describe} from "vitest";
+import {it, expect, describe, beforeEach} from "vitest";
 import {ClientSDK} from "./ClientSDK";
 
 import * as dotenv from 'dotenv';
 import {v4 as uuid} from 'uuid';
+import {RedisClientType} from "redis";
 
 dotenv.config();
 
 describe('Unit Tests', () => {
     describe('constructor()', () => {
-        describe('readYamlFile()', () => {
+        describe.concurrent('readYamlFile()', () => {
             it('should throw an error if invalid yaml file path provided', () => {
                 // Arrange
                 const invalidYamlFilePath = 'invalid/path/to/yaml/file';
@@ -41,11 +42,18 @@ describe('Unit Tests', () => {
     });
 
     describe('getTokenFromRedis() & setTokenInRedis()', () => {
+        let redisClient:  RedisClientType;
+
+        beforeEach(() => {
+            // Arrange
+            // @ts-ignore
+             redisClient = ClientSDK.connectToRedis(undefined);
+
+        });
+
         describe('getTokenFromRedis()', () => {
             it('should return null if no token found in redis', async () => {
                 // Arrange
-                // @ts-ignore
-                const redisClient = ClientSDK.connectToRedis(undefined);
                 const key = 'no-token-key';
 
                 // Act
@@ -60,8 +68,6 @@ describe('Unit Tests', () => {
         describe('setTokenInRedis()', () => {
             it('should set token in redis', async () => {
                 // Arrange
-                // @ts-ignore
-                const redisClient = ClientSDK.connectToRedis(undefined);
                 const key = 'token';
                 const value = 'token';
 
@@ -79,23 +85,6 @@ describe('Unit Tests', () => {
                 // Assert
                 expect(result).toBe(value);
             });
-        });
-
-        it('should get a key if already stored in redis', async () => {
-            // Arrange
-            // @ts-ignore
-            const redisClient = ClientSDK.connectToRedis(undefined);
-            const key = 'token';
-            const value = 'token';
-
-            // Act
-            // @ts-ignore
-            await ClientSDK.setTokenInRedis(redisClient, key, value);
-            // @ts-ignore
-            const result = await ClientSDK.getTokenFromRedis(redisClient, key);
-
-            // Assert
-            expect(result).toBe(value);
         });
     });
 });
