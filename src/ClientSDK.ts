@@ -33,12 +33,12 @@ export class ClientSDK {
             {
                 level: 'info',
                 // stream: process.stdout,
-                path: 'logs/ClientSDK.info.log',
+                path: '/var/tmp/ClientSDK.info.log',
             },
             {
                 level: 'error',
                 // stream: process.stderr,
-                path: 'logs/ClientSDK.info.log',
+                path: '/var/tmp/ClientSDK.error.log',
             }
         ]
     });
@@ -46,7 +46,7 @@ export class ClientSDK {
     constructor(private readonly CLIENT_ID: string, private readonly CLIENT_PASSWORD: string,
                 private readonly CLIENT_NID: string, private readonly redisUrl?: string) {
         // Read config.yaml file
-        this.config = ClientSDK.readYamlFile(this.yamlConfigFilePath) as Config;
+        this.config = ClientSDK.readYamlFile(this.yamlConfigFilePath, this.logger) as Config;
 
         // Replace placeholders in config file
         this.config.services.map(service => {
@@ -55,7 +55,7 @@ export class ClientSDK {
         });
 
         // Connect to redis
-        this.redisClient = ClientSDK.connectToRedis(this.redisUrl);
+        this.redisClient = ClientSDK.connectToRedis(this.redisUrl, this.logger);
     }
 
     private static readYamlFile(filePath: string, logger?: Logger) {
