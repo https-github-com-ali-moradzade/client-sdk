@@ -20,6 +20,12 @@ const clientSDK = new ClientSDK(clientId, clientPassword, clientNid, redisUrl);
 `clientNid` is the client nid
 `redisUrl` is the redis url, and is optional. if you don't pass it, it will use `redis://localhost:6379`
 
+`redisUrl` is used, so if your tokens are expired, it will refresh them automatically and cache them in redis.
+
+You can put these information in `.env` file, and use `dotenv` package to load them.  
+Sample `.env` file is provided for you in `.env.example` file.
+
+
 ### Call a service
 You can call a service with `callService` method:
 
