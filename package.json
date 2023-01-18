@@ -7,7 +7,7 @@
     "start:build": "tsc -W",
     "start:run": "nodemon dest/index.js",
     "start": "concurrently npm:start:*",
-    "test": "vitest --run --reporter verbose",
+    "test": "NODE_ENV=test && vitest --run --reporter verbose",
     "test:watch": "vitest"
   },
   "repository": {

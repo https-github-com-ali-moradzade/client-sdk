@@ -47,7 +47,7 @@ describe('Unit Tests', () => {
         beforeEach(() => {
             // Arrange
             // @ts-ignore
-            redisClient = ClientSDK.connectToRedis(undefined);
+            redisClient = ClientSDK.connectToRedis();
         });
 
         describe('getTokenFromRedis()', () => {

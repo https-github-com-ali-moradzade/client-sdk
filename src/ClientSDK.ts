@@ -26,14 +26,14 @@ interface Config {
 export class ClientSDK {
     private readonly yamlConfigFilePath = __dirname + '/../config.yaml';
     private readonly config: Config;
-    private readonly redisClient: RedisClientType = createClient();
+    private readonly redisClient: RedisClientType;
     private readonly logger = Logger.createLogger({
         name: 'ClientSDK',
         streams: [
             {
                 level: 'info',
                 // stream: process.stdout,
-                path: '/var/tmp/ClientSDK.info.log',
+                path: 'ClientSDK.info.log',
             },
             {
                 level: 'error',
@@ -45,6 +45,25 @@ export class ClientSDK {
 
     constructor(private readonly CLIENT_ID: string, private readonly CLIENT_PASSWORD: string,
                 private readonly CLIENT_NID: string, private readonly redisUrl?: string) {
+
+        if (process.env.NODE_ENV !== 'test') {
+            // Create redis client
+            if (redisUrl)
+                this.redisClient = createClient({
+                    url: redisUrl
+                });
+            else
+                this.redisClient = createClient();
+        } else {
+            if (process.env.DOCKERIZED) {
+                this.redisClient = createClient({
+                    url: 'redis://redis:6379'
+                });
+            } else {
+                this.redisClient = createClient();
+            }
+        }
+
         // Read config.yaml file
         this.config = ClientSDK.readYamlFile(this.yamlConfigFilePath, this.logger) as Config;
 

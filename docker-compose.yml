@@ -1,0 +1,28 @@
+version: '3.7'
+services:
+  web:
+    build: .
+
+    depends_on:
+      - redis
+
+    volumes:
+      - /usr/app/node_modules
+      - .:/usr/app
+
+  test:
+    build: .
+    depends_on:
+      - redis
+
+    environment:
+      - DOCKERIZED=true
+
+    command:  npm run test
+
+    volumes:
+      - /usr/app/node_modules
+      - .:/app
+
+  redis:
+    image: 'redis'
