@@ -97,11 +97,18 @@ You can see info logs in the `/var/tmp/client-sdk.info.log` file.
 You can see error logs in the `/var/tmp/client-sdk.error.log` file.
 
 Logs are in json format, you can use:
+
+Too see info logs:
 ```bash
-cat /var/tmp/client-sdk.info.log | bunyan
+cat /var/tmp/ClientSDK.info.log | bunyan
 ```
 
-To see the logs in a pretty format:
+Too see error logs:
+```bash
+cat /var/tmp/ClientSDK.error.log | bunyan
+```
+
+We piped output to bunyan, to pretty print the logs, this is a sample output for our `info`:
 ```bash
 [2023-01-08T07:43:31.356Z]  INFO: ClientSDK/21700 on ali-finnotech: Config file loaded from client-sdk/dest/../config.yaml successfully ..
 [2023-01-08T07:43:31.360Z]  INFO: ClientSDK/21700 on ali-finnotech: No redis url provided, connecting to our local redis server ..
@@ -130,12 +137,12 @@ private readonly logger = Logger.createLogger({
         {
             level: 'info',
             // stream: process.stdout,
-            path: 'you-custom-path-here/client-sdk.info.log'
+            path: 'your-custom-path-here/ClientSDK.info.log'
         },
         {
             level: 'error',
             // stream: process.stderr,
-            path: 'you-custom-path-here/client-sdk.error.log'',
+            path: 'your-custom-path-here/ClientSDK.error.log'
         }
     ]
 });
