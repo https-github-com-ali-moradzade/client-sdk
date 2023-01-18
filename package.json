@@ -4,9 +4,7 @@
   "description": "Implementing a client sdk to request our services and show the results to user",
   "main": "index.js",
   "scripts": {
-    "start:build": "tsc -W",
-    "start:run": "nodemon dest/index.js",
-    "start": "concurrently npm:start:*",
+    "start": "ts-node src/index.ts",
     "test": "NODE_ENV=test && vitest --run --reporter verbose",
     "test:watch": "vitest"
   },

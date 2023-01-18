@@ -34,7 +34,7 @@ export class ClientSDK {
             {
                 level: 'info',
                 // stream: process.stdout,
-                path: 'ClientSDK.info.log',
+                path: '/var/tmp/ClientSDK.info.log',
             },
             {
                 level: 'error',
