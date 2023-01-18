@@ -4,9 +4,10 @@
   "description": "Implementing a client sdk to request our services and show the results to user",
   "main": "index.js",
   "scripts": {
-    "start": "ts-node src/index.ts",
-    "test": "NODE_ENV=test && vitest --run --reporter verbose",
-    "test:watch": "vitest"
+    "start:build": "tsc",
+    "start:run": "node dest/index.js",
+    "start": "npm run start:build && npm run start:run",
+    "test": "vitest --run --reporter verbose"
   },
   "repository": {
     "type": "git",

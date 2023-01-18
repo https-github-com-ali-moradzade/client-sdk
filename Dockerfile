@@ -7,6 +7,9 @@ WORKDIR /usr/app
 COPY package.json ./
 RUN npm install
 
+# Install tsc
+RUN npm install -g typescript
+
 # Bundle app source
 COPY . .
 
