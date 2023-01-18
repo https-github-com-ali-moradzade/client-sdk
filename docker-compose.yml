@@ -5,6 +5,9 @@ services:
     depends_on:
       - redis
 
+    environment:
+      - DOCKERIZED=true
+
     volumes:
       - /usr/app/node_modules
       - .:/usr/app

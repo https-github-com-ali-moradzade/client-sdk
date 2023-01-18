@@ -7,7 +7,7 @@
     "start:build": "tsc",
     "start:run": "node dest/index.js",
     "start": "npm run start:build && npm run start:run",
-    "test": "vitest --run --reporter verbose"
+    "test": "NODE_ENV=test vitest --run --reporter verbose"
   },
   "repository": {
     "type": "git",

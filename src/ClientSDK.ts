@@ -78,49 +78,27 @@ export class ClientSDK {
     private static connectToRedis(redisUrl: string | undefined, logger?: Logger) {
         let redisClient: RedisClientType;
 
-        if (process.env.NODE_ENV !== 'test') {
+        if (process.env.DOCKERIZED) {
+            if (logger)
+                logger.info('[TEST MODE] Running in dockerized environment, connecting to redis server ..');
+            redisClient = createClient({
+                url: 'redis://redis:6379'
+            });
+        } else if (process.env.NODE_ENV === 'test') {
+            if (logger)
+                logger.info('[TEST MODE] Running in local environment, connecting to localhost redis server ..');
+            redisClient = createClient();
+        } else {
             if (redisUrl) {
                 if (logger)
-                    logger.info(`Connecting to redis at ${redisUrl} ..`);
+                    logger.info(`Connecting to redis server on ${redisUrl} ..`);
                 redisClient = createClient({
                     url: redisUrl
                 });
-
-                redisClient.on('error', (err) => {
-                    if (logger)
-                        logger.error(err, `Redis client connecting to specified url`);
-                });
             } else {
                 if (logger)
-                    logger.info('No redis url provided, connecting to our local redis server ..');
+                    logger.info('Connecting to localhost redis server ..');
                 redisClient = createClient();
-
-                redisClient.on('error', (err) => {
-                    if (logger)
-                        logger.error(err, 'Redis client connecting to localhost error: ');
-                });
-            }
-        } else {
-            if (process.env.DOCKERIZED) {
-                if (logger)
-                    logger.info('[TEST MODE] Running in dockerized environment, connecting to redis server ..');
-                redisClient = createClient({
-                    url: 'redis://redis:6379'
-                });
-
-                redisClient.on('error', (err) => {
-                    if (logger)
-                        logger.error(err, 'Redis client connecting to redis server error: ');
-                });
-            } else {
-                if (logger)
-                    logger.info('[TEST MODE] Running in local environment, connecting to redis server ..');
-                redisClient = createClient();
-
-                redisClient.on('error', (err) => {
-                    if (logger)
-                        logger.error(err, 'Redis client connecting to localhost error: ');
-                });
             }
         }
 
