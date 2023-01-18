@@ -19,7 +19,7 @@ describe('Unit Tests', () => {
                 const resultFunction = () => {
                     // @ts-ignore
                     ClientSDK.readYamlFile(invalidYamlFilePath);
-                }
+                };
 
                 // Assert
                 expect(resultFunction).toThrowError(errorMessage);
@@ -38,17 +38,16 @@ describe('Unit Tests', () => {
                 expect(result).hasOwnProperty('main');
                 expect(result).hasOwnProperty('services');
             });
-        })
+        });
     });
 
     describe('getTokenFromRedis() & setTokenInRedis()', () => {
-        let redisClient:  RedisClientType;
+        let redisClient: RedisClientType;
 
         beforeEach(() => {
             // Arrange
             // @ts-ignore
-             redisClient = ClientSDK.connectToRedis(undefined);
-
+            redisClient = ClientSDK.connectToRedis(undefined);
         });
 
         describe('getTokenFromRedis()', () => {
@@ -72,11 +71,6 @@ describe('Unit Tests', () => {
                 const value = 'token';
 
                 // Act
-                // Delete key if exists
-                await redisClient.connect();
-                await redisClient.del(key);
-                await redisClient.disconnect();
-
                 // @ts-ignore
                 await ClientSDK.setTokenInRedis(redisClient, key, value);
                 // @ts-ignore
