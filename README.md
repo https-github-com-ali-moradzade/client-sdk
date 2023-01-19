@@ -91,24 +91,13 @@ Resulting output should look like:
 ```javascript
 {
     responseCode: 'FN-BGVH-20000000000',
-        trackId
-:
-    'de8d92b3-e6fd-47ee-b61b-1a80d1a771c6',
-        result
-:
-    {
-        Amount: '1195000',
-            BillId
-    :
-        '894156221148',
-            PayId
-    :
-        '119511559',
-            Date
-    :
-        ''
-    }
-,
+        trackId : 'de8d92b3-e6fd-47ee-b61b-1a80d1a771c6',
+        result : {
+            Amount: '1195000',
+            BillId : '894156221148',
+            PayId : '119511559',
+            Date : ''
+    } ,
     status: 'DONE'
 }
 ```
