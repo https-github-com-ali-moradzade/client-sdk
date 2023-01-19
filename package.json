@@ -7,7 +7,7 @@
     "start:build": "tsc",
     "start:run": "node dest/index.js",
     "start": "npm run start:build && npm run start:run",
-    "test": "NODE_ENV=test vitest --run --reporter verbose"
+    "test": "vitest --run --reporter verbose"
   },
   "repository": {
     "type": "git",
@@ -21,13 +21,12 @@
   "homepage": "https://github.com/https-github-com-ali-moradzade/client-sdk#readme",
   "dependencies": {
     "@types/bunyan": "^1.8.8",
-    "@types/dotenv": "^8.2.0",
     "@types/js-yaml": "^4.0.5",
-    "@types/redis": "^4.0.11",
     "@types/uuid": "^9.0.0",
     "axios": "^1.2.1",
     "bunyan": "^1.8.15",
     "concurrently": "^7.6.0",
+    "dotenv": "^16.0.3",
     "js-yaml": "^4.1.0",
     "nodemon": "^2.0.20",
     "redis": "^4.5.1",

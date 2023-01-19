@@ -7,7 +7,7 @@ dotenv.config();
 
 (async () => {
     const clientSDK = new ClientSDK(process.env.CLIENT_ID || '',
-        process.env.CLIENT_PASSWORD || '', process.env.CLIENT_NID || '');
+        process.env.CLIENT_PASSWORD || '', process.env.CLIENT_NID || '', process.env.REDIS_URL);
     const result = await clientSDK.callService('billingInquiry', {
         trackId: uuid(),
         type: "Tel",

@@ -47,7 +47,7 @@ describe('Unit Tests', () => {
         beforeEach(() => {
             // Arrange
             // @ts-ignore
-            redisClient = ClientSDK.connectToRedis();
+            redisClient = ClientSDK.connectToRedis(process.env.REDIS_URL);
         });
 
         describe('getTokenFromRedis()', () => {
@@ -83,15 +83,21 @@ describe('Unit Tests', () => {
     });
 });
 
-let clientSDK: ClientSDK;
 
 it("should be able to create a ClientSDK instance", () => {
-    clientSDK = new ClientSDK(process.env.CLIENT_ID || '',
-        process.env.CLIENT_PASSWORD || '', process.env.CLIENT_NID || '');
+    const clientSDK = new ClientSDK(process.env.CLIENT_ID || '',
+        process.env.CLIENT_PASSWORD || '', process.env.CLIENT_NID || '', process.env.REDIS_URL || '');
     expect(clientSDK).toBeDefined();
 });
 
 describe('E2E Tests', () => {
+    let clientSDK: ClientSDK;
+
+    beforeEach(() => {
+        clientSDK = new ClientSDK(process.env.CLIENT_ID || '',
+            process.env.CLIENT_PASSWORD || '', process.env.CLIENT_NID || '', process.env.REDIS_URL || '');
+    });
+
     describe('callService()', () => {
         describe('token', () => {
             it('should call service token and get a new token with specified scopes', async () => {

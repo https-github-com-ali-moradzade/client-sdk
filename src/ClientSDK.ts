@@ -3,7 +3,6 @@ import * as yaml from 'js-yaml';
 import * as Logger from 'bunyan';
 import axios, {AxiosError} from "axios";
 import {createClient, RedisClientType} from 'redis';
-import * as process from "process";
 
 // Based on config.yaml file
 interface Service {
@@ -45,9 +44,9 @@ export class ClientSDK {
     });
 
     constructor(private readonly CLIENT_ID: string, private readonly CLIENT_PASSWORD: string,
-                private readonly CLIENT_NID: string, private readonly redisUrl?: string) {
+                private readonly CLIENT_NID: string, private readonly REDIS_URL?: string) {
         // Connect to redis
-        this.redisClient = ClientSDK.connectToRedis(this.redisUrl, this.logger);
+        this.redisClient = ClientSDK.connectToRedis(this.REDIS_URL, this.logger);
 
         // Read config.yaml file
         this.config = ClientSDK.readYamlFile(this.yamlConfigFilePath, this.logger) as Config;
@@ -57,9 +56,6 @@ export class ClientSDK {
             service.url = service.url.replace('{clientId}', this.CLIENT_ID);
             service.url = service.url.replace('{address}', this.config.main.address);
         });
-
-        // Connect to redis
-        this.redisClient = ClientSDK.connectToRedis(this.redisUrl, this.logger);
     }
 
     private static readYamlFile(filePath: string, logger?: Logger) {
@@ -78,28 +74,16 @@ export class ClientSDK {
     private static connectToRedis(redisUrl: string | undefined, logger?: Logger) {
         let redisClient: RedisClientType;
 
-        if (process.env.DOCKERIZED) {
+        if (redisUrl) {
             if (logger)
-                logger.info('[TEST MODE] Running in dockerized environment, connecting to redis server ..');
+                logger.info(`Connecting to redis server on ${redisUrl} ..`);
             redisClient = createClient({
-                url: 'redis://redis:6379'
+                url: redisUrl
             });
-        } else if (process.env.NODE_ENV === 'test') {
-            if (logger)
-                logger.info('[TEST MODE] Running in local environment, connecting to localhost redis server ..');
-            redisClient = createClient();
         } else {
-            if (redisUrl) {
-                if (logger)
-                    logger.info(`Connecting to redis server on ${redisUrl} ..`);
-                redisClient = createClient({
-                    url: redisUrl
-                });
-            } else {
-                if (logger)
-                    logger.info('Connecting to localhost redis server ..');
-                redisClient = createClient();
-            }
+            if (logger)
+                logger.info('Connecting to localhost redis server ..');
+            redisClient = createClient();
         }
 
         return redisClient;
@@ -110,7 +94,6 @@ export class ClientSDK {
 
         const service = this.validate(serviceName, payload);
         service.payload = payload;
-
 
         this.logger.info('Service validated successfully ..')
 
