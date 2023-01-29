@@ -1,7 +1,9 @@
 version: '3.7'
 services:
-  web:
-    build: .
+  test:
+    build:
+        context: .
+        dockerfile: Dockerfile.dev
     depends_on:
       - redis
 
@@ -11,20 +13,6 @@ services:
 
     environment:
       - REDIS_URL=redis://redis:6379
-
-  test:
-    build: .
-    depends_on:
-      - redis
-
-    environment:
-      - REDIS_URL=redis://redis:6379
-
-    command: npm run test
-
-    volumes:
-      - /usr/app/node_modules
-      - .:/app
 
   redis:
     image: 'redis'
