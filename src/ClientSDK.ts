@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as yaml from 'js-yaml';
 import * as Logger from 'bunyan';
-import axios, {AxiosError} from "axios";
+import axios, {AxiosError, AxiosRequestConfig, AxiosResponse} from "axios";
 import {createClient, RedisClientType} from 'redis';
 
 // Based on config.yaml file
@@ -120,9 +120,9 @@ export class ClientSDK {
             );
         }
 
-        axios.interceptors.response.use(response => {
+        axios.interceptors.response.use((response: AxiosResponse) => {
             return response;
-        }, async (error) => {
+        }, async (error: any) => {
             if (error.response.status === 400 || error.response.status === 401 || error.response.status === 403) {
                 if (error.response.status === 400)
                     this.logger.info(`No token stored for this key [${service.scope}], getting a new one ..`);
@@ -190,13 +190,15 @@ export class ClientSDK {
             grant_type: string; nid: string; scopes: string;
         }): Promise<string> {
 
+        const config = {
+            auth: {
+                username: header.clientId,
+                password: header.clientPassword
+            }
+        } as AxiosRequestConfig;
+
         try {
-            const {data} = await axios.post(url, body, {
-                auth: {
-                    username: header.clientId,
-                    password: header.clientPassword
-                }
-            });
+            const {data} = await axios.post(url, body, config);
 
             return data;
         } catch (e) {
@@ -228,12 +230,13 @@ export class ClientSDK {
         const params = service.payload;
         const token = await this.getValidToken(service.scope);
         let result;
+        const config = {
+            headers: {Authorization: `Bearer ${token}`},
+            params: params
+        } as AxiosRequestConfig;
 
         try {
-            const {data} = await axios.get(service.url, {
-                headers: {Authorization: `Bearer ${token}`},
-                params: params
-            });
+            const {data} = await axios.get(service.url, config);
 
             result = data;
         } catch (e) {
@@ -250,12 +253,13 @@ export class ClientSDK {
         const params = service.payload;
         const token = await this.getValidToken(service.scope);
         let result;
+        const config = {
+            headers: {Authorization: `Bearer ${token}`},
+            params: {trackId}
+        } as AxiosRequestConfig;
 
         try {
-            const {data} = await axios.post(service.url, params, {
-                headers: {Authorization: `Bearer ${token}`},
-                params: {trackId}
-            });
+            const {data} = await axios.post(service.url, params, config);
 
             result = data;
         } catch (e) {
