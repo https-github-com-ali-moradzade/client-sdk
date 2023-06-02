@@ -1,6 +1,3 @@
-# dest folder, where our compiled js files will be placed
-dest
-
 # Typescript gitignore
 lib-cov
 *.seed
