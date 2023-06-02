@@ -1,5 +1,5 @@
 {
-  "name": "client-sdk",
+  "name": "finnotech-client-sdk",
   "description": "Implementing a client sdk to request our services and show the results to user",
   "main": "index.js",
   "scripts": {
@@ -11,7 +11,7 @@
   "files": ["dest/**/*"],
   "prepare": "npm run build",
   "prepublishOnly": "npm run test",
-  "version" : "git add -A src",
+  "version" : "1.0.0",
   "postversion" : "git push && git push --tags",
   "repository": {
     "type": "git",
