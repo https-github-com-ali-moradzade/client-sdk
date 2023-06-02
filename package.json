@@ -4,9 +4,9 @@
   "description": "Implementing a client sdk to request our services and show the results to user",
   "main": "index.js",
   "scripts": {
-    "start:build": "tsc",
+    "build": "tsc",
     "start:run": "node dest/index.js",
-    "start": "npm run start:build && npm run start:run",
+    "start": "npm run build && npm run start:run",
     "test": "vitest --run --reporter verbose"
   },
   "repository": {
