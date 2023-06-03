@@ -1,6 +1,6 @@
 main:
   address: "https://apibeta.finnotech.ir"
-  sandboxAddress: "https://sandboxapi.finnotech.ir"
+  sandboxAddress: "https://api.staging.finnotech.ir"
 
 services:
   # Template for each service

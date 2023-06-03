@@ -31,7 +31,7 @@ export class ClientSDK {
         logger.info(`Calling service ${serviceName} ..`);
 
         // const service = this.validate(serviceName, payload);
-        const service = validatePayload(serviceName, payload);
+        const service = validatePayload(config, serviceName, payload);
         service.payload = payload;
 
         logger.info('Service validated successfully ..')
@@ -52,7 +52,7 @@ export class ClientSDK {
         axios.interceptors.response.use((response: AxiosResponse) => {
             return response;
         }, async (error: any) => {
-            if (error.response.status === 401) {
+            if (error.response.status === 401 || error.response.status === 403) {
                 const token = await getToken(this.url, service.scope);
                 if (token) {
                     await setTokenInRedis(service.scope, token);

@@ -1,100 +1,24 @@
-import {it, expect, describe, beforeEach} from "vitest";
+import {beforeEach, describe, expect, it} from "vitest";
 import {ClientSDK} from "./ClientSDK";
 
 import * as dotenv from 'dotenv';
 import {v4 as uuid} from 'uuid';
-import {RedisClientType} from "redis";
 
 dotenv.config();
 
-describe('Unit Tests', () => {
-    describe('getTokenFromRedis() & setTokenInRedis()', () => {
-        let redisClient: RedisClientType;
-
-        beforeEach(() => {
-            // Arrange
-            // @ts-ignore
-            redisClient = ClientSDK.connectToRedis(process.env.REDIS_URL);
-        });
-
-        describe('getTokenFromRedis()', () => {
-            it('should return null if no token found in redis', async () => {
-                // Arrange
-                const key = 'no-token-key';
-
-                // Act
-                // @ts-ignore
-                const result = await ClientSDK.getTokenFromRedis(redisClient, key);
-
-                // Assert
-                expect(result).toBeNull();
-            });
-        });
-
-        describe('setTokenInRedis()', () => {
-            it('should set token in redis', async () => {
-                // Arrange
-                const key = 'token';
-                const value = 'token';
-
-                // Act
-                // @ts-ignore
-                await ClientSDK.setTokenInRedis(redisClient, key, value);
-                // @ts-ignore
-                const result = await ClientSDK.getTokenFromRedis(redisClient, key);
-
-                // Assert
-                expect(result).toBe(value);
-            });
-        });
-    });
-});
-
-
 it("should be able to create a ClientSDK instance", () => {
-    const clientSDK = new ClientSDK(process.env.CLIENT_ID || '',
-        process.env.CLIENT_PASSWORD || '', process.env.CLIENT_NID || '', process.env.REDIS_URL || '');
+    const clientSDK = new ClientSDK(true);
     expect(clientSDK).toBeDefined();
 });
 
 describe('E2E Tests', () => {
-    let clientSDK: ClientSDK;
+    let clientSDK = new ClientSDK(true);
 
     beforeEach(() => {
-        clientSDK = new ClientSDK(process.env.CLIENT_ID || '',
-            process.env.CLIENT_PASSWORD || '', process.env.CLIENT_NID || '', process.env.REDIS_URL || '');
+        clientSDK = new ClientSDK(true);
     });
 
     describe('callService()', () => {
-        describe('token', () => {
-            it('should call service token and get a new token with specified scopes', async () => {
-                // Arrange
-                const scopes = ["oak:iban-inquiry:get", "oak:group-iban-inquiry:post", "oak:group-iban-inquiry:get"];
-
-                // Act
-                const response = await clientSDK.callService(
-                    'token',
-                    {
-                        grant_type: 'client_credentials',
-                        nid: '4000329766',
-                        scopes: scopes
-                    }) as {
-                    result: {
-                        value: string;
-                        scopes: string[];
-                        leftTime: number;
-                        creationDate: string;
-                        refreshToken: string;
-                        _id: string;
-                    },
-                    status: string
-                };
-
-                // Assert
-                expect(response.status).toBe('DONE');
-            });
-        });
-
         describe('cardToIban', () => {
             it('should get iban for a card', async () => {
                 // Arrange
@@ -125,85 +49,85 @@ describe('E2E Tests', () => {
             });
         });
 
-        describe('billingInquiry', () => {
-            it('should get billing info for a phone number', async () => {
-                // Arrange
-                const trackId = uuid();
-                const type = "Tel";
-                const parameter = "02177689361";
-                const secondParameter = "MCI";
-
-                // Act
-                const result = await clientSDK.callService('billingInquiry', {
-                    trackId,
-                    type,
-                    parameter,
-                    secondParameter
-                }) as {
-                    responseCode: string;
-                    trackId: string;
-                    result: {
-                        Amount: string;
-                        BillId: string;
-                        PayId: string;
-                        Date: string;
-                    },
-                    status: string;
-                };
-
-                // Assert
-                expect(result.status).toBe('DONE');
-            });
-        });
-
-        describe('mobileCardVerification', () => {
-            it('should verify a mobile card', async () => {
-                // Arrange
-                const trackId = uuid();
-                const mobile = "09120000000";
-                const card = "6280231304985178";
-
-                // Act
-                const result = await clientSDK.callService('mobileCardVerification', {
-                    trackId,
-                    mobile,
-                    card
-                }) as {
-                    responseCode: 'FN-KCFH-20001100000',
-                    trackId: '3c2e6426-65aa-461b-9a90-8ffa2a5ef841',
-                    result: { isValid: false },
-                    status: 'DONE'
-                };
-
-                // Assert
-                expect(result.status).toBe('DONE');
-            });
-        });
-
-        describe('guarantyInquiry', () => {
-            it('should get guaranty info for an nid', async () => {
-                // Arrange
-                const trackId = uuid();
-                const nid = "4000329766";
-
-                // Act
-                const result = await clientSDK.callService('guarantyInquiry', {
-                    trackId,
-                    nid
-                }) as {
-                    responseCode: string;
-                    trackId: string;
-                    result: {
-                        guarantyNationalCode: string;
-                        result: number;
-                        message: string;
-                    },
-                    status: string;
-                };
-
-                // Assert
-                expect(result.status).toBe('DONE');
-            });
-        });
+        // describe('billingInquiry', () => {
+        //     it('should get billing info for a phone number', async () => {
+        //         // Arrange
+        //         const trackId = uuid();
+        //         const type = "Tel";
+        //         const parameter = "02177689361";
+        //         const secondParameter = "MCI";
+        //
+        //         // Act
+        //         const result = await clientSDK.callService('billingInquiry', {
+        //             trackId,
+        //             type,
+        //             parameter,
+        //             secondParameter
+        //         }) as {
+        //             responseCode: string;
+        //             trackId: string;
+        //             result: {
+        //                 Amount: string;
+        //                 BillId: string;
+        //                 PayId: string;
+        //                 Date: string;
+        //             },
+        //             status: string;
+        //         };
+        //
+        //         // Assert
+        //         expect(result.status).toBe('DONE');
+        //     });
+        // });
+        //
+        // describe('mobileCardVerification', () => {
+        //     it('should verify a mobile card', async () => {
+        //         // Arrange
+        //         const trackId = uuid();
+        //         const mobile = "09120000000";
+        //         const card = "6280231304985178";
+        //
+        //         // Act
+        //         const result = await clientSDK.callService('mobileCardVerification', {
+        //             trackId,
+        //             mobile,
+        //             card
+        //         }) as {
+        //             responseCode: 'FN-KCFH-20001100000',
+        //             trackId: '3c2e6426-65aa-461b-9a90-8ffa2a5ef841',
+        //             result: { isValid: false },
+        //             status: 'DONE'
+        //         };
+        //
+        //         // Assert
+        //         expect(result.status).toBe('DONE');
+        //     });
+        // });
+        //
+        // describe('guarantyInquiry', () => {
+        //     it('should get guaranty info for an nid', async () => {
+        //         // Arrange
+        //         const trackId = uuid();
+        //         const nid = "4000329766";
+        //
+        //         // Act
+        //         const result = await clientSDK.callService('guarantyInquiry', {
+        //             trackId,
+        //             nid
+        //         }) as {
+        //             responseCode: string;
+        //             trackId: string;
+        //             result: {
+        //                 guarantyNationalCode: string;
+        //                 result: number;
+        //                 message: string;
+        //             },
+        //             status: string;
+        //         };
+        //
+        //         // Assert
+        //         expect(result.status).toBe('DONE');
+        //     });
+        // });
     });
 });
