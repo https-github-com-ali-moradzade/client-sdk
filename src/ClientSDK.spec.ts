@@ -32,102 +32,58 @@ describe('E2E Tests', () => {
                     card,
                     version
                 }) as {
-                    trackId: string,
-                    result: {
-                        deposit: string,
-                        bankName: string,
-                        card: string,
-                        depositOwners: string,
-                        IBAN: string,
-                        depositStatus: string
-                    },
-                    status: string
+                    status: number,
+                    data: {
+                        trackId: string,
+                        result: {
+                            deposit: string,
+                            bankName: string,
+                            card: string,
+                            depositOwners: string,
+                            IBAN: string,
+                            depositStatus: string
+                        },
+                        status: string
+                    }
                 };
 
                 // Assert
-                expect(result.status).toBe('DONE');
+                expect(result.data.status).toEqual('DONE');
             });
         });
 
-        // describe('billingInquiry', () => {
-        //     it('should get billing info for a phone number', async () => {
-        //         // Arrange
-        //         const trackId = uuid();
-        //         const type = "Tel";
-        //         const parameter = "02177689361";
-        //         const secondParameter = "MCI";
-        //
-        //         // Act
-        //         const result = await clientSDK.callService('billingInquiry', {
-        //             trackId,
-        //             type,
-        //             parameter,
-        //             secondParameter
-        //         }) as {
-        //             responseCode: string;
-        //             trackId: string;
-        //             result: {
-        //                 Amount: string;
-        //                 BillId: string;
-        //                 PayId: string;
-        //                 Date: string;
-        //             },
-        //             status: string;
-        //         };
-        //
-        //         // Assert
-        //         expect(result.status).toBe('DONE');
-        //     });
-        // });
-        //
-        // describe('mobileCardVerification', () => {
-        //     it('should verify a mobile card', async () => {
-        //         // Arrange
-        //         const trackId = uuid();
-        //         const mobile = "09120000000";
-        //         const card = "6280231304985178";
-        //
-        //         // Act
-        //         const result = await clientSDK.callService('mobileCardVerification', {
-        //             trackId,
-        //             mobile,
-        //             card
-        //         }) as {
-        //             responseCode: 'FN-KCFH-20001100000',
-        //             trackId: '3c2e6426-65aa-461b-9a90-8ffa2a5ef841',
-        //             result: { isValid: false },
-        //             status: 'DONE'
-        //         };
-        //
-        //         // Assert
-        //         expect(result.status).toBe('DONE');
-        //     });
-        // });
-        //
-        // describe('guarantyInquiry', () => {
-        //     it('should get guaranty info for an nid', async () => {
-        //         // Arrange
-        //         const trackId = uuid();
-        //         const nid = "4000329766";
-        //
-        //         // Act
-        //         const result = await clientSDK.callService('guarantyInquiry', {
-        //             trackId,
-        //             nid
-        //         }) as {
-        //             responseCode: string;
-        //             trackId: string;
-        //             result: {
-        //                 guarantyNationalCode: string;
-        //                 result: number;
-        //                 message: string;
-        //             },
-        //             status: string;
-        //         };
-        //
-        //         // Assert
-        //         expect(result.status).toBe('DONE');
-        //     });
-        // });
+        describe('billingInquiry', () => {
+            it('should get billing info for a phone number', async () => {
+                // Arrange
+                const trackId = uuid();
+                const type = "Tel";
+                const parameter = "02177689361";
+                const secondParameter = "MCI";
+
+                // Act
+                const result = await clientSDK.callService('billingInquiry', {
+                    trackId,
+                    type,
+                    parameter,
+                    secondParameter
+                }) as {
+                    status: number;
+                    data: {
+                        responseCode: string;
+                        trackId: string;
+                        result: {
+                            Amount: string;
+                            BillId: string;
+                            PayId: string;
+                            Date: string;
+                        },
+                        status: string;
+                    }
+                };
+
+                // Assert
+                expect(result.data.status).toEqual('DONE');
+            });
+        });
     });
 });

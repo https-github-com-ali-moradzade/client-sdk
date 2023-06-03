@@ -5,24 +5,29 @@ import {getToken} from "./getToken";
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
+let currentUrl = '';
+let currentService: Service;
 
-export async function restClient(service: Service) {
-    axios.interceptors.response.use((response: AxiosResponse) => {
-        return response;
-    }, async (error: any) => {
-        if (error.response.status === 401 || error.response.status === 403) {
-            const token = await getToken("https://api.staging.finnotech.ir", service.scope);
-            if (token) {
-                await setTokenInRedis(service.scope, token);
+axios.interceptors.response.use((response: AxiosResponse) => {
+    return response;
+}, async (error: any) => {
+    if (error.response.status === 401 || error.response.status === 403) {
+        const token = await getToken(currentUrl, currentService.scope);
+        if (token) {
+            await setTokenInRedis(currentService.scope, token);
 
-                // Retry request
-                error.config.headers.Authorization = `Bearer ${await getTokenFromRedis(service.scope)}`;
-                return axios.request(error.config);
-            }
+            // Retry request
+            error.config.headers.Authorization = `Bearer ${token}`;
+            return axios.request(error.config);
         }
+    }
 
-        return error;
-    });
+    return error;
+});
+
+export async function restClient(url: string, service: Service) {
+    currentUrl = url;
+    currentService = service;
 
     const method = service.method;
     let trackId: string | undefined = undefined;
@@ -42,8 +47,8 @@ export async function restClient(service: Service) {
         params: method === 'get' ? service.payload : {trackId},
         data: method === 'post' ? service.payload : undefined,
 
-        validateStatus: function () {
-            return true;
+        validateStatus: function (status: number) {
+            return !(status === 401 || status == 403);
         }
     } as AxiosRequestConfig;
 

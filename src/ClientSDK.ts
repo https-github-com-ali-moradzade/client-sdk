@@ -50,24 +50,6 @@ export class ClientSDK {
             service: service
         }, 'Service url and payload are ready ..');
 
-        axios.interceptors.response.use((response: AxiosResponse) => {
-            return response;
-        }, async (error: any) => {
-            if (error.response.status === 401 || error.response.status === 403) {
-                const token = await getToken(this.url, service.scope);
-                if (token) {
-                    await setTokenInRedis(service.scope, token);
-
-                    // Retry request
-                    error.config.headers.Authorization = `Bearer ${await getTokenFromRedis(service.scope)}`;
-                    return axios.request(error.config);
-                }
-            }
-            logger.error(error, `Error calling service: ${serviceName}`);
-
-            return error;
-        });
-
-        return await restClient(service);
+        return await restClient(this.url, service);
     }
 }
