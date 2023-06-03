@@ -27,20 +27,19 @@
   },
   "homepage": "https://github.com/https-github-com-ali-moradzade/client-sdk#readme",
   "dependencies": {
-    "@types/bunyan": "^1.8.8",
-    "@types/js-yaml": "^4.0.5",
-    "@types/uuid": "^9.0.0",
     "axios": "^1.4.0",
     "bunyan": "^1.8.15",
     "concurrently": "^7.6.0",
     "dotenv": "^16.0.3",
     "js-yaml": "^4.1.0",
-    "nodemon": "^2.0.20",
     "redis": "^4.5.1",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@types/node": "^18.11.17",
+    "@types/bunyan": "^1.8.8",
+    "@types/js-yaml": "^4.0.5",
+    "@types/uuid": "^9.0.0",
     "ts-node": "^10.9.1",
     "vitest": "^0.31.4"
   }
