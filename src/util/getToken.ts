@@ -12,11 +12,13 @@ export async function getToken(address: string, scope: string) {
         scopes: scope,
     });
 
-    const basic = Buffer.from(`${CLIENT_SDK.config.clientId}:${CLIENT_SDK.config.clientPassword}`).toString('base64');
     const config = {
+        auth: {
+            username: CLIENT_SDK.config.clientId,
+            password: CLIENT_SDK.config.clientPassword,
+        },
         headers: {
             'Content-Type': 'application/json',
-            Authorization: `Basic ${basic}`,
         }
     }
 
