@@ -6,7 +6,7 @@ import {CLIENT_SDK} from "../config";
 const logger = createLogger();
 
 // Based on config.yaml file
-interface Service {
+export interface Service {
     name: string,
     url: string,
     scope: string,
