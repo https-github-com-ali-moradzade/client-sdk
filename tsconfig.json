@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "es2016",
     "module": "commonjs",
-    "rootDir": "./src",
+    "rootDir": "./",
     "outDir": "./dest",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
@@ -14,5 +14,9 @@
     "dest/**/*.d.ts",
     "src/**/*.test.ts",
     "src/**/*.spec.ts"
+  ],
+  "include": [
+    "index.ts",
+    "src/**/*.ts"
   ]
 }
