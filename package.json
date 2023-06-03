@@ -1,7 +1,10 @@
 {
   "name": "finnotech-client-sdk",
   "description": "Implementing a client sdk to request our services and show the results to user",
-  "main": "index.js",
+  "main": "./dest/index.js",
+  "exports": {
+    ".": "./dest/index.js"
+  },
   "scripts": {
     "build": "tsc",
     "start:run": "node dest/index.js",
