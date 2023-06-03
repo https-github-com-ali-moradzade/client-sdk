@@ -8,11 +8,14 @@
     "start": "npm run build && npm run start:run",
     "test": "vitest --run --reporter verbose"
   },
-  "files": ["dest/**/*", "config.yaml"],
+  "files": [
+    "dest/**/*",
+    "config.yaml"
+  ],
   "prepare": "npm run build",
   "prepublishOnly": "npm run test",
-  "version" : "1.0.2",
-  "postversion" : "git push && git push --tags",
+  "version": "1.0.2",
+  "postversion": "git push && git push --tags",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/https-github-com-ali-moradzade/client-sdk.git"
@@ -34,11 +37,11 @@
     "js-yaml": "^4.1.0",
     "nodemon": "^2.0.20",
     "redis": "^4.5.1",
-    "uuid": "^9.0.0",
-    "vitest": "^0.26.3"
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@types/node": "^18.11.17",
-    "ts-node": "^10.9.1"
+    "ts-node": "^10.9.1",
+    "vitest": "^0.31.4"
   }
 }
