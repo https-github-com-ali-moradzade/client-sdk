@@ -36,9 +36,12 @@ export async function restClient(service: Service) {
 
     const config = {
         url: service.url,
-        headers: {Authorization: `Bearer ${token}`},
+        headers: {
+            Authorization: `Bearer ${token}`
+        },
         params: method === 'get' ? service.payload : {trackId},
         data: method === 'post' ? service.payload : undefined,
+
         validateStatus: function () {
             return true;
         }
