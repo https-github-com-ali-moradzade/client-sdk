@@ -11,7 +11,7 @@
   "files": ["dest/**/*", "config.yaml"],
   "prepare": "npm run build",
   "prepublishOnly": "npm run test",
-  "version" : "1.0.1",
+  "version" : "1.0.2",
   "postversion" : "git push && git push --tags",
   "repository": {
     "type": "git",

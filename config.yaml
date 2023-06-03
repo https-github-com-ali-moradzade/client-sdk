@@ -31,6 +31,16 @@ services:
       parameter: string
       secondParameter: string
 
+  - name: "drivingOffense"
+    url: "{address}/billing/v2/clients/{clientId}/drivingOffense"
+    scope: "billing:driving-offense-inquiry:get"
+    method: "get"
+    payload:
+      trackId: string
+      mobile: string
+      nationalID: string
+      plateNumber: string
+
   - name: "mobileCardVerification"
     url: "{address}/kyc/v2/clients/{clientId}/mobileCardVerification"
     scope: "kyc:mobile-card-verification:post"

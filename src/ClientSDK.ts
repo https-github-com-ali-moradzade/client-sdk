@@ -54,7 +54,8 @@ export class ClientSDK {
         // Replace placeholders in config file
         this.config.services.map(service => {
             service.url = service.url.replace('{clientId}', this.CLIENT_ID);
-            service.url = service.url.replace('{address}', this.config.main.address);
+            // TODO: make this dynamic
+            service.url = service.url.replace('{address}', this.config.main.sandboxAddress);
         });
     }
 
@@ -89,6 +90,8 @@ export class ClientSDK {
         return redisClient;
     }
 
+    // TODO: wrong wrong, 400 is response for validation or smt else, not invalid token,
+    // handle cases of response other than 200
     async callService(serviceName: string, payload: any) {
         this.logger.info(`Calling service ${serviceName} ..`);
 
@@ -206,6 +209,7 @@ export class ClientSDK {
         }
     }
 
+    // TODO: validate is sensitive to position of fields
     validate(serviceName: string, payload: any): Service {
         const ourService = this.config.services.find(s => s.name === serviceName);
         if (!ourService) {
