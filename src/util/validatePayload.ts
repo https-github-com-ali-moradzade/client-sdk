@@ -1,6 +1,8 @@
-import {Config, Service} from "./readYml";
+import {readYmlFile, Service} from "./readYml";
 
-export function validatePayload(config: Config, serviceName: string, payload: any): Service {
+const config = readYmlFile();
+
+export function validatePayload(serviceName: string, payload: any): Service {
     const ourService = config.services.find(s => s.name === serviceName);
 
     if (!ourService) {

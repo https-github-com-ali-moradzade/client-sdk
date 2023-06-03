@@ -23,7 +23,7 @@ describe('readYamlFile()', () => {
     it('should correctly read yaml file', () => {
         // Arrange
         CLIENT_SDK.config.ymlFilePath = mainPath;
-       
+
         // Act
         const result = readYmlFile();
 
