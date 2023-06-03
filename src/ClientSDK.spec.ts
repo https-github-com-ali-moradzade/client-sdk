@@ -48,6 +48,8 @@ describe('E2E Tests', () => {
                     }
                 };
 
+                console.log(result)
+
                 // Assert
                 expect(result.data.status).toEqual('DONE');
             });

@@ -2,9 +2,6 @@ import {readYmlFile} from "./util/readYml";
 import {createLogger} from "./util/logger";
 import {CLIENT_SDK} from "./config";
 import {validatePayload} from "./util/validatePayload";
-import axios, {AxiosResponse} from 'axios';
-import {getToken} from "./util/getToken";
-import {getTokenFromRedis, setTokenInRedis} from "./redis/queries";
 import {restClient} from "./util/restClient";
 
 const logger = createLogger();
