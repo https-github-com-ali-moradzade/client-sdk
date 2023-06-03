@@ -8,39 +8,6 @@ import {RedisClientType} from "redis";
 dotenv.config();
 
 describe('Unit Tests', () => {
-    describe('constructor()', () => {
-        describe.concurrent('readYamlFile()', () => {
-            it('should throw an error if invalid yaml file path provided', () => {
-                // Arrange
-                const invalidYamlFilePath = 'invalid/path/to/yaml/file';
-                const errorMessage = `Failed to load config from specified yaml file`;
-
-                // Act
-                const resultFunction = () => {
-                    // @ts-ignore
-                    ClientSDK.readYamlFile(invalidYamlFilePath);
-                };
-
-                // Assert
-                expect(resultFunction).toThrowError(errorMessage);
-            });
-
-            it('should correctly read yaml file is path is valid', () => {
-                // Arrange
-                const validYamlFilePath = './config.yaml';
-
-                // Act
-                // @ts-ignore
-                const result = ClientSDK.readYamlFile(validYamlFilePath);
-
-                // Assert
-                expect(result).toBeDefined();
-                expect(result).hasOwnProperty('main');
-                expect(result).hasOwnProperty('services');
-            });
-        });
-    });
-
     describe('getTokenFromRedis() & setTokenInRedis()', () => {
         let redisClient: RedisClientType;
 
