@@ -3,11 +3,13 @@
 This is a wrapper to call the apis from [Finnotech](https://finnotech.ir/doc/), note that this client only works
 with `Client_Credential` type services.
 
-## Usage
+## Installation
 
-You can only use this client with services in the `config.yaml` file.
+You can install this package with the following command:
 
-To create a new client sdk we have:
+```bash
+npm i finnotech-client-sdk
+```
 
 ### Create a new client
 
@@ -16,19 +18,29 @@ You can create a new client with the following code:
 ```typescript
 import {ClientSDK} from "./ClientSDK";
 
-const clientSDK = new ClientSDK(clientId, clientPassword, clientNid, redisUrl);
+const clientSDK = new ClientSDK(); // to use sandbox url: new ClientSDK(true);
 ```
 
-`clientId` is the client id which you get from [Finnotech](https://finnotech.ir/clients), in applications section.  
-`clientPassword` is the client password which you get from [Finnotech](https://finnotech.ir/clients), in applications
+You should configure .env file before using client:
+
+```dotenv
+# Client Configuration
+CLIENT_NID=""
+CLIENT_ID=""
+CLIENT_PASSWORD=""
+
+# Redis Configuration
+REDIS_HOST="localhost"
+REDIS_PORT="6379"
+
+# Logger Configuration
+LOG_PATH="/var/tmp/ClientSDK.log"
+```
+
+`CLIENT_ID` is the client id which you get from [Finnotech](https://finnotech.ir/clients), in applications section.  
+`CLIENT_PASSWORD` is the client password which you get from [Finnotech](https://finnotech.ir/clients), in applications
 section.  
-`clientNid` is the client nid
-`redisUrl` is the redis url, and is optional. if you don't pass it, it will use `redis://localhost:6379`
-
-`redisUrl` is used, so if your tokens are expired, it will refresh them automatically and cache them in redis.
-
-You can put these information in `.env` file, and use `dotenv` package to load them.  
-Sample `.env` file is provided for you in `.env.example` file.
+`CLIENT_NID` is the client nid
 
 ### Call a service
 
@@ -59,6 +71,7 @@ To run the project in docker, you can use the following command:
 ```bash
 docker-compose up --build
 ```
+
 This command will build the images and run your index.ts file and all the tests.
 
 For stopping the docker, you can use the following command:
@@ -74,12 +87,12 @@ import {ClientSDK} from "./ClientSDK";
 import {v4 as uuid} from 'uuid';
 
 // Create a new client, use redis from localhost
-const clientSDK = new ClientSDK(clientId, clientPassword, clientNid);
+const clientSDK = new ClientSDK();
 
 const result = await clientSDK.callService('billingInquiry', {
     trackId: uuid(),
     type: "Tel",
-    parameter: "02177689361",
+    parameter: "021xxxxxxx1",
     secondParameter: "MCI"
 })
 
@@ -91,12 +104,12 @@ Resulting output should look like:
 ```javascript
 {
     responseCode: 'FN-BGVH-20000000000',
-        trackId : 'de8d92b3-e6fd-47ee-b61b-1a80d1a771c6',
-        result : {
-            Amount: '1195000',
-            BillId : '894156221148',
-            PayId : '119511559',
-            Date : ''
+    trackId: 'de8d92dd-e6fd-4dee-b61b-1a80d1a771dd',
+    result: {
+        Amount: '1195000',
+        BillId: '89xxxxxxx48',
+        PayId: '1xxxxxxx9',
+        Date: ''
     } ,
     status: 'DONE'
 }
@@ -117,67 +130,9 @@ the client.
 
 ## Logging
 
-There are two types of logs in this project, `info` and `error`.
+Configure log path: `LOG_PATH` in `.env` file.
 
-You can see info logs in the `/var/tmp/client-sdk.info.log` file.
-You can see error logs in the `/var/tmp/client-sdk.error.log` file.
-
-Logs are in json format, you can use:
-
-Too see info logs:
-
-```bash
-cat /var/tmp/ClientSDK.info.log | bunyan
+```dotenv
+# Logger Configuration
+LOG_PATH="/var/tmp/ClientSDK.log"
 ```
-
-Too see error logs:
-
-```bash
-cat /var/tmp/ClientSDK.error.log | bunyan
-```
-
-We piped output to bunyan, to pretty print the logs, this is a sample output for our `info`:
-
-```bash
-[2023-01-08T07:43:31.356Z]  INFO: ClientSDK/21700 on ali-finnotech: Config file loaded from client-sdk/dest/../config.yaml successfully ..
-[2023-01-08T07:43:31.360Z]  INFO: ClientSDK/21700 on ali-finnotech: No redis url provided, connecting to our local redis server ..
-[2023-01-08T07:43:31.361Z]  INFO: ClientSDK/21700 on ali-finnotech: Calling service billingInquiry ..
-[2023-01-08T07:43:31.361Z]  INFO: ClientSDK/21700 on ali-finnotech: Service validated successfully ..
-[2023-01-08T07:43:31.361Z]  INFO: ClientSDK/21700 on ali-finnotech: Service url and payload are ready ..
-service: {
-    "name": "billingInquiry",
-    "url": "https://apibeta.finnotech.ir/billing/v2/clients/alimoradzade/billingInquiry",
-    "scope": "billing:cc-inquiry:get",
-    "method": "get",
-    "payload": {
-        "trackId": "2fea673c-becf-4e35-8063-f6ab8812241a",
-        "type": "Tel",
-        "parameter": "02177689361",
-        "secondParameter": "MCI"
-    }
-}
-```
-
-Also you can change log path in `ClientSDK.ts` file, and put your own path.
-
-```typescript
-private readonly
-logger = Logger.createLogger({
-    name: 'ClientSDK',
-    streams: [
-        {
-            level: 'info',
-            // stream: process.stdout,
-            path: 'your-custom-path-here/ClientSDK.info.log'
-        },
-        {
-            level: 'error',
-            // stream: process.stderr,
-            path: 'your-custom-path-here/ClientSDK.error.log'
-        }
-    ]
-});
-```
-
-If you want to see the logs in console, you can uncomment the `stream` lines, and comment the `path` lines.
-
