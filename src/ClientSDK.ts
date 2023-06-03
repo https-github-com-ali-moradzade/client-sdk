@@ -76,7 +76,7 @@ export class ClientSDK {
 
     async handleGetRequest(service: Service) {
         const params = service.payload;
-        const token = await this.getValidToken(service.scope);
+        const token = await getTokenFromRedis(service.scope)
 
         let result;
         const config = {
@@ -100,7 +100,8 @@ export class ClientSDK {
         delete service.payload.trackId;
 
         const params = service.payload;
-        const token = await this.getValidToken(service.scope);
+        const token = await getTokenFromRedis(service.scope)
+
         let result;
         const config = {
             headers: {Authorization: `Bearer ${token}`},
