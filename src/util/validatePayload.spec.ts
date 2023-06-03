@@ -83,4 +83,51 @@ describe('validatePayload', () => {
         // Assert
         expect(act).not.toThrowError();
     });
+
+    it('when method is get trackId is optional', () => {
+        // Arrange
+        const serviceName = 'cardToIban';
+        const payload = {
+            version: '',
+            card: '',
+        };
+
+        // Act
+        const act = () => validatePayload(config, serviceName, payload);
+
+        // Assert
+        expect(act).not.toThrowError();
+    });
+
+    // it('when method is post trackId is required', () => {
+    //     // Arrange
+    //     const serviceName = 'drivingOffense';
+    //     const payload = {
+    //         mobile: '',
+    //         nationalID: '',
+    //         plateNumber: '',
+    //     }
+    //
+    //     // Act
+    //     const act = () => validatePayload(config, serviceName, payload);
+    //
+    //     // Assert
+    //     expect(act).toThrowError();
+    // });
+
+    it('should validate drivingOffense payload', () => {
+        // Arrange
+        const serviceName = 'drivingOffense';
+        const payload = {
+            mobile: '',
+            nationalID: '',
+            plateNumber: '',
+        }
+
+        // Act
+        const act = () => validatePayload(config, serviceName, payload);
+
+        // Assert
+        expect(act).not.toThrowError();
+    });
 });

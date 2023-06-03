@@ -3,6 +3,7 @@ import {ClientSDK} from "./ClientSDK";
 
 import * as dotenv from 'dotenv';
 import {v4 as uuid} from 'uuid';
+import exp = require("constants");
 
 dotenv.config();
 
@@ -76,6 +77,42 @@ describe('E2E Tests', () => {
                             BillId: string;
                             PayId: string;
                             Date: string;
+                        },
+                        status: string;
+                    }
+                };
+
+                // Assert
+                expect(result.data.status).toEqual('DONE');
+            });
+        });
+
+        describe('drivingOffense', () => {
+            it('should get driving offense for nid and plate number', async () => {
+                // Arrange
+                const payload = {
+                    "trackId": uuid(),
+                    "mobile": "989201911901",
+                    "nationalID": "0077682361",
+                    "plateNumber": "823216599",
+                }
+
+                // Act
+                const result = await clientSDK.callService('drivingOffense', payload) as {
+                    status: number;
+                    data: {
+                        responseCode: string;
+                        trackId: string;
+                        result: {
+                            Bills: any[]
+                            plateDictation: null,
+                            updateViolationsDate: null,
+                            inquiryDate: null,
+                            inquiryTime: null,
+                            billId: string;
+                            paymentId: string;
+                            TotalAmount: number;
+                            PlateNumber: string;
                         },
                         status: string;
                     }

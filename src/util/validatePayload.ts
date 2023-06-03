@@ -10,9 +10,12 @@ export function validatePayload(config: Config, serviceName: string, payload: an
     // Check for required parameters
     // trackId is optional in get, and required in post
     const payloadKeys = Object.keys(payload);
-    if (ourService.method === 'get' && !payloadKeys.includes('trackId')) {
-        payloadKeys.unshift('trackId');
+    if (ourService.method === 'post' && !payloadKeys.includes('trackId')) {
+        throw new Error(`Invalid payload for service: ${serviceName}, trackId is required`);
     }
+
+    delete payload.trackId;
+    delete ourService.payload.trackId;
 
     if (!haveSameKeys(payload, ourService.payload)) {
         throw new Error(`Invalid payload for service: ${serviceName}`);
