@@ -1,10 +1,11 @@
-import {readYmlFile, Service} from "./util/readYml";
+import {readYmlFile} from "./util/readYml";
 import {createLogger} from "./util/logger";
 import {CLIENT_SDK} from "./config";
 import {validatePayload} from "./util/validatePayload";
-import axios, {AxiosResponse, AxiosRequestConfig, AxiosError} from 'axios';
+import axios, {AxiosResponse} from 'axios';
 import {getToken} from "./util/getToken";
 import {getTokenFromRedis, setTokenInRedis} from "./redis/queries";
+import {restClient} from "./util/restClient";
 
 const logger = createLogger();
 const config = readYmlFile();
@@ -67,55 +68,6 @@ export class ClientSDK {
             return error;
         });
 
-        if (service.method === 'get') {
-            return await this.handleGetRequest(service);
-        } else if (service.method === 'post') {
-            return await this.handlePostRequest(service);
-        }
-    }
-
-    async handleGetRequest(service: Service) {
-        const params = service.payload;
-        const token = await getTokenFromRedis(service.scope)
-
-        let result;
-        const config = {
-            headers: {Authorization: `Bearer ${token}`},
-            params: params
-        } as AxiosRequestConfig;
-
-        try {
-            const {data} = await axios.get(service.url, config);
-
-            result = data;
-        } catch (e) {
-            throw new Error(`Failed to call service ${service.name}: ${(e as AxiosError).message}`);
-        }
-
-        return result;
-    }
-
-    async handlePostRequest(service: Service) {
-        const trackId = service.payload.trackId;
-        delete service.payload.trackId;
-
-        const params = service.payload;
-        const token = await getTokenFromRedis(service.scope)
-
-        let result;
-        const config = {
-            headers: {Authorization: `Bearer ${token}`},
-            params: {trackId}
-        } as AxiosRequestConfig;
-
-        try {
-            const {data} = await axios.post(service.url, params, config);
-
-            result = data;
-        } catch (e) {
-            throw new Error(`Failed to call service ${service.name}: ${(e as AxiosError).message}`);
-        }
-
-        return result;
+        return await restClient(service);
     }
 }
