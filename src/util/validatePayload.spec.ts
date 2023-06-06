@@ -1,8 +1,6 @@
 import {describe, expect, it} from "vitest";
 import {validatePayload} from "./validatePayload";
-import {readYmlFile} from "./readYml";
 
-const config = readYmlFile();
 
 describe('validatePayload', () => {
     it('should throw an error if the service is not found', () => {
@@ -10,7 +8,7 @@ describe('validatePayload', () => {
         const serviceName = 'not-found';
 
         // Act
-        const act = () => validatePayload(config, serviceName, {});
+        const act = () => validatePayload(serviceName, {});
 
         // Assert
         expect(act).toThrowError(`Service ${serviceName} not found in config file`);
@@ -27,7 +25,7 @@ describe('validatePayload', () => {
         };
 
         // Act
-        const act = () => validatePayload(config, serviceName, payload);
+        const act = () => validatePayload(serviceName, payload);
 
         // Assert
         expect(act).toThrowError(`Invalid payload for service: ${serviceName}`);
@@ -44,7 +42,7 @@ describe('validatePayload', () => {
             };
 
             // Act
-            const act = () => validatePayload(config, serviceName, payload);
+            const act = () => validatePayload(serviceName, payload);
 
             // Assert
             expect(act).not.toThrowError();
@@ -61,7 +59,7 @@ describe('validatePayload', () => {
             }
 
             // Act
-            const act = () => validatePayload(config, serviceName, payload);
+            const act = () => validatePayload(serviceName, payload);
 
             // Assert
             expect(act).not.toThrowError();
@@ -78,7 +76,7 @@ describe('validatePayload', () => {
         };
 
         // Act
-        const act = () => validatePayload(config, serviceName, payload);
+        const act = () => validatePayload(serviceName, payload);
 
         // Assert
         expect(act).not.toThrowError();
@@ -93,7 +91,7 @@ describe('validatePayload', () => {
         };
 
         // Act
-        const act = () => validatePayload(config, serviceName, payload);
+        const act = () => validatePayload(serviceName, payload);
 
         // Assert
         expect(act).not.toThrowError();
@@ -109,7 +107,7 @@ describe('validatePayload', () => {
     //     }
     //
     //     // Act
-    //     const act = () => validatePayload(config, serviceName, payload);
+    //     const act = () => validatePayload(serviceName, payload);
     //
     //     // Assert
     //     expect(act).toThrowError();
@@ -125,7 +123,7 @@ describe('validatePayload', () => {
         }
 
         // Act
-        const act = () => validatePayload(config, serviceName, payload);
+        const act = () => validatePayload(serviceName, payload);
 
         // Assert
         expect(act).not.toThrowError();

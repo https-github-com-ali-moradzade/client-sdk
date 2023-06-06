@@ -1,7 +1,7 @@
-import {Config, Service} from "./readYml";
+import {CLIENT_SDK, Service} from "../config";
 
-export function validatePayload(config: Config, serviceName: string, payload: any): Service {
-    const ourService = config.services.find(s => s.name === serviceName);
+export function validatePayload(serviceName: string, payload: any): Service {
+    const ourService = CLIENT_SDK.ymlServicesConfig.services.find(s => s.name === serviceName);
 
     if (!ourService) {
         throw new Error(`Service ${serviceName} not found in config file`);

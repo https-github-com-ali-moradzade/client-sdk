@@ -1,11 +1,57 @@
 import * as dotenv from 'dotenv';
-import {config} from "./util/readYml";
+import fs from "fs";
+import * as yaml from "js-yaml";
 
 dotenv.config();
+
+export interface Service {
+    name: string,
+    url: string,
+    scope: string,
+    method: string,
+    payload: {
+        [p: string]: string
+    }
+}
+
+export interface Config {
+    main: {
+        address: string;
+        stagingAddress: string;
+        sandboxAddress: string;
+    },
+    services: Service[]
+}
+
+function readYmlFile(): Config {
+    const filePath = __dirname + '/../config.yaml';
+
+    try {
+        let fileContents = fs.readFileSync(filePath, 'utf8');
+
+        return yaml.load(fileContents) as Config;
+    } catch (e) {
+        throw new Error(`Failed to load config from specified yaml file`);
+    }
+}
 
 function throwError(message: string) {
     throw new Error(message);
 }
+
+const clientNid = process.env.CLIENT_NID || throwError('Please provide client nid in .env file');
+const clientId = process.env.CLIENT_ID || throwError('Please provide client id in .env file');
+
+const ymlServicesConfig = readYmlFile();
+const url = process.env.DEVELOPMENT ? ymlServicesConfig.main.stagingAddress :
+    (process.env.USE_SANDBOX ? ymlServicesConfig.main.sandboxAddress :
+        ymlServicesConfig.main.address);
+
+
+ymlServicesConfig.services.map(service => {
+    service.url = service.url.replace('{clientId}', clientId as string);
+    service.url = service.url.replace('{address}', url);
+});
 
 export const CLIENT_SDK = {
     redis: {
@@ -13,12 +59,11 @@ export const CLIENT_SDK = {
         port: parseInt(process.env.REDIS_PORT || '6379')
     },
     config: {
-        clientNid: process.env.CLIENT_NID || throwError('Please provide client nid in .env file'),
-        clientId: process.env.CLIENT_ID || throwError('Please provide client id in .env file'),
+        clientNid,
+        clientId,
         clientPassword: process.env.CLIENT_PASSWORD || throwError('Please provide client password in .env file'),
+        url,
         logPath: process.env.LOG_PATH || '/var/tmp/ClientSDK.log',
-        url: process.env.DEVELOPMENT ? config.main.stagingAddress :
-            (process.env.USE_SANDBOX ? config.main.sandboxAddress :
-                config.main.address),
     },
+    ymlServicesConfig,
 }

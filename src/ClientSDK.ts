@@ -1,4 +1,3 @@
-import {config} from "./util/readYml";
 import {createLogger} from "./util/logger";
 import {CLIENT_SDK} from "./config";
 import {validatePayload} from "./util/validatePayload";
@@ -9,7 +8,7 @@ const logger = createLogger();
 export class ClientSDK {
     constructor() {
         // Replace placeholders in config file
-        config.services.map(service => {
+        CLIENT_SDK.ymlServicesConfig.services.map(service => {
             service.url = service.url.replace('{clientId}', CLIENT_SDK.config.clientId as string);
             service.url = service.url.replace('{address}', CLIENT_SDK.config.url);
         });
@@ -19,7 +18,7 @@ export class ClientSDK {
         logger.info(`Calling service ${serviceName} ..`);
 
         // const service = this.validate(serviceName, payload);
-        const service = validatePayload(config, serviceName, payload);
+        const service = validatePayload(serviceName, payload);
         service.payload = payload;
 
         logger.info('Service validated successfully ..')

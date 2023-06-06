@@ -1,4 +1,4 @@
-import {Service} from "./readYml";
+import {Service} from "../config";
 import {getTokenFromRedis, setTokenInRedis} from "../redis/queries";
 import axios, {AxiosError, AxiosRequestConfig, AxiosResponse} from "axios";
 import {getToken} from "./getToken";
