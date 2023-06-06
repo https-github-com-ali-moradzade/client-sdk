@@ -1,5 +1,5 @@
 import {CLIENT_SDK} from "../config";
-import axios, {AxiosRequestConfig} from "axios";
+import axios, {AxiosError, AxiosRequestConfig} from "axios";
 import {createLogger} from "./logger";
 
 /**
@@ -29,7 +29,11 @@ export async function getToken(address: string, scope: string) {
     try {
         result = await axios.post(`${address}/dev/v2/oauth2/token`, data, config);
     } catch (error) {
-        logger.info(`Failed to get token for scope ${scope}`)
+        logger.info({
+            errorData: (error as AxiosError).response?.data,
+            errorStatus: (error as AxiosError).response?.status,
+        }, `getToken -- failed to get token for scope ${scope}`);
+        
         return undefined;
     }
 

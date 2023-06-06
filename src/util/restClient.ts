@@ -1,6 +1,6 @@
 import {Service} from "./readYml";
 import {getTokenFromRedis, setTokenInRedis} from "../redis/queries";
-import axios, {AxiosRequestConfig, AxiosResponse} from "axios";
+import axios, {AxiosError, AxiosRequestConfig, AxiosResponse} from "axios";
 import {getToken} from "./getToken";
 import {createLogger} from "./logger";
 
@@ -16,7 +16,10 @@ let currentService: Service;
 axios.interceptors.response.use((response: AxiosResponse) => {
     return response;
 }, async (error: any) => {
-    logger.info({response: error.response}, 'interceptor -- error -- response')
+    logger.info({
+        errorData: (error as AxiosError).response?.data,
+        errorStatus: (error as AxiosError).response?.status,
+    }, 'interceptor -- error -- response');
 
     if (error.response.status === 401 || error.response.status === 403) {
         const token = await getToken(currentUrl, currentService.scope);
