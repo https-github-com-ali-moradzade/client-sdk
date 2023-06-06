@@ -1,27 +1,45 @@
 import {describe, expect, it} from "vitest";
-import {getToken} from "./getToken";
+import {getClientCredentialToken, getTokenByRefreshCode} from "./getToken";
 
 describe('getToken', async () => {
-    it('should be able to get token', async () => {
-        // Arrange
-        const scope = 'billing:driving-offense-inquiry:get'
+    describe('getClientCredentialToken', async () => {
+        it('should be able to get token', async () => {
+            // Arrange
+            const scope = 'billing:driving-offense-inquiry:get'
 
-        // Act
-        const result = await getToken(scope);
+            // Act
+            const {token, refreshToken} = await getClientCredentialToken(scope);
 
-        // Assert
-        expect(result).toBeDefined()
-        expect(result).toBeTypeOf('string')
+            // Assert
+            expect(token).toBeDefined()
+            expect(token).toBeTypeOf('string')
+
+            expect(refreshToken).toBeDefined()
+            expect(refreshToken).toBeTypeOf('string')
+        })
+
+        it('should throw error when scope is invalid', async () => {
+            // Arrange
+            const scope = 'invalid scope'
+
+            // Act && Assert
+            await expect(getClientCredentialToken(scope)).rejects.toThrowError();
+        });
     })
 
-    it('should throw error when scope is invalid', async () => {
-        // Arrange
-        const scope = 'invalid scope'
+    describe('setToken', async () => {
+        it('should get token for cc/billingInquiry', async () => {
+            // Arrange
+            const tokenType = 'CLIENT-CREDENTIAL';
+            const scope = 'billing:driving-offense-inquiry:get'
+            const {refreshToken} = await getClientCredentialToken(scope);
 
-        // Act
-        const result = await getToken(scope);
+            // Act
+            const token = await getTokenByRefreshCode(tokenType, refreshToken);
 
-        // Assert
-        expect(result).toBeUndefined()
-    });
+            // Assert
+            expect(token).toBeDefined()
+            expect(token).toBeTypeOf('string')
+        })
+    })
 })

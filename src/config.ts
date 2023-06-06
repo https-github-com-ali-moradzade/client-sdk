@@ -43,9 +43,10 @@ const clientNid = process.env.CLIENT_NID || throwError('Please provide client ni
 const clientId = process.env.CLIENT_ID || throwError('Please provide client id in .env file');
 
 const ymlServicesConfig = readYmlFile();
-const url = process.env.DEVELOPMENT ? ymlServicesConfig.main.stagingAddress :
-    (process.env.USE_SANDBOX ? ymlServicesConfig.main.sandboxAddress :
-        ymlServicesConfig.main.address);
+const url =
+    process.env.DEVELOPMENT ? ymlServicesConfig.main.stagingAddress :
+        process.env.USE_SANDBOX ? ymlServicesConfig.main.sandboxAddress :
+            ymlServicesConfig.main.address;
 
 
 ymlServicesConfig.services.map(service => {

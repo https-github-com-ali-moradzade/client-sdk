@@ -1,7 +1,7 @@
 import {Service} from "../config";
 import {getTokenFromRedis, setTokenInRedis} from "../redis/queries";
 import axios, {AxiosError, AxiosRequestConfig, AxiosResponse} from "axios";
-import {getToken} from "./getToken";
+import {getClientCredentialToken} from "./getToken";
 import {createLogger} from "./logger";
 
 /**
@@ -21,7 +21,7 @@ axios.interceptors.response.use((response: AxiosResponse) => {
     }, 'interceptor -- error -- response');
 
     if (error.response.status === 401 || error.response.status === 403) {
-        const token = await getToken(currentService.scope);
+        const {token} = await getClientCredentialToken(currentService.scope);
         if (token) {
             await setTokenInRedis(currentService.scope, token);
 
