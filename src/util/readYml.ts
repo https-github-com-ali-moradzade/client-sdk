@@ -19,6 +19,7 @@ export interface Service {
 export interface Config {
     main: {
         address: string;
+        stagingAddress: string;
         sandboxAddress: string;
     },
     services: Service[]

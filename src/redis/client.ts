@@ -8,7 +8,11 @@ const client = createClient({
     },
 });
 
-client.on('error', (err) => console.error(err));
+client.on('error', (err) => {
+    console.error(err?.message)
+    throw err;
+});
+
 client.connect();
 
 export {client};

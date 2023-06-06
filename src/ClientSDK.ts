@@ -13,15 +13,17 @@ export class ClientSDK {
     constructor(useSandbox?: boolean) {
         // Replace placeholders in config file
         config.services.map(service => {
-            service.url = service.url.replace('{clientId}', CLIENT_SDK.config.clientId);
+            service.url = service.url.replace('{clientId}', CLIENT_SDK.config.clientId as string);
 
-            if (useSandbox) {
+            if (CLIENT_SDK.developmentMode) {
+                this.url = config.main.stagingAddress;
+            } else if (useSandbox) {
                 this.url = config.main.sandboxAddress;
-                service.url = service.url.replace('{address}', config.main.sandboxAddress);
             } else {
                 this.url = config.main.address;
-                service.url = service.url.replace('{address}', config.main.address);
             }
+
+            service.url = service.url.replace('{address}', this.url);
         });
     }
 

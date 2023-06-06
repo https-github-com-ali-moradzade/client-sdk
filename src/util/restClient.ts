@@ -4,6 +4,9 @@ import axios, {AxiosRequestConfig, AxiosResponse} from "axios";
 import {getToken} from "./getToken";
 import {createLogger} from "./logger";
 
+/**
+ * TODO: Remove this line after tls problem solved
+ */
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 const logger = createLogger();
 

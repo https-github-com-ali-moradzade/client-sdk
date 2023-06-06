@@ -1,7 +1,10 @@
 import {CLIENT_SDK} from "../config";
-import axios from "axios";
+import axios, {AxiosRequestConfig} from "axios";
 import {createLogger} from "./logger";
 
+/**
+ * TODO: Remove this line after tls problem solved
+ */
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 const logger = createLogger();
 
@@ -20,7 +23,7 @@ export async function getToken(address: string, scope: string) {
         headers: {
             'Content-Type': 'application/json',
         }
-    }
+    } as AxiosRequestConfig;
 
     let result;
     try {

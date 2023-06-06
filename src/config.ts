@@ -17,5 +17,6 @@ export const CLIENT_SDK = {
         clientPassword: process.env.CLIENT_PASSWORD || throwError('Please provide client password in .env file'),
         ymlFilePath: __dirname + '/../config.yaml',
         logPath: process.env.LOG_PATH || '/var/tmp/ClientSDK.log',
-    }
+    },
+    developmentMode: process.env.DEVELOPMENT || false,
 }
