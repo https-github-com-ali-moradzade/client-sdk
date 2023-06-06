@@ -1,7 +1,12 @@
 import {CLIENT_SDK, Service} from "../config";
 
 export function validatePayload(serviceName: string, payload: any): Service {
-    const ourService = CLIENT_SDK.ymlServicesConfig.services.find(s => s.name === serviceName);
+    const services = [
+        ...CLIENT_SDK.ymlServicesConfig.services.code,
+        ...CLIENT_SDK.ymlServicesConfig.services.clientCredential,
+    ];
+
+    const ourService = services.find(s => s.name === serviceName);
 
     if (!ourService) {
         throw new Error(`Service ${serviceName} not found in config file`);

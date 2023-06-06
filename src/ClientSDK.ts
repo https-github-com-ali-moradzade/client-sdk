@@ -8,7 +8,12 @@ const logger = createLogger();
 export class ClientSDK {
     constructor() {
         // Replace placeholders in config file
-        CLIENT_SDK.ymlServicesConfig.services.map(service => {
+        const services = [
+            ...CLIENT_SDK.ymlServicesConfig.services.code,
+            ...CLIENT_SDK.ymlServicesConfig.services.clientCredential,
+        ];
+
+        services.map(service => {
             service.url = service.url.replace('{clientId}', CLIENT_SDK.config.clientId as string);
             service.url = service.url.replace('{address}', CLIENT_SDK.config.url);
         });

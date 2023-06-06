@@ -4,191 +4,201 @@ main:
   sandboxAddress: "https://sandboxapi.finnotech.ir"
 
 services:
-  # Template for each service
-  #  - name: ""
-  #    url: ""
-  #    scope: ""
-  #    method: ""
-  #    payload:
-  #      trackId: string
+  code:
+    - name: "proxyInquiry"
+      url: "{address}/oak/v2/clients/{clientId}/proxyInquiry"
+      scope: "oak:proxy-inquiry:get"
+      method: "get"
+      payload:
+        trackId: string
+        inquiryTrackId: string
 
-  # Our custom services for testing
-  - name: "cardToIban"
-    url: "{address}/facility/v2/clients/{clientId}/cardToIban"
-    scope: "facility:card-to-iban:get"
-    method: "get"
-    payload:
-      trackId: string
-      card: string
-      version: string
+  clientCredential:
+    # Template for each service
+    #  - name: ""
+    #    url: ""
+    #    scope: ""
+    #    method: ""
+    #    payload:
+    #      trackId: string
 
-  - name: "billingInquiry"
-    url: "{address}/billing/v2/clients/{clientId}/billingInquiry"
-    scope: "billing:cc-inquiry:get"
-    method: "get"
-    payload:
-      trackId: string
-      type: string
-      parameter: string
-      secondParameter: string
+    # Our custom services for testing
+    - name: "cardToIban"
+      url: "{address}/facility/v2/clients/{clientId}/cardToIban"
+      scope: "facility:card-to-iban:get"
+      method: "get"
+      payload:
+        trackId: string
+        card: string
+        version: string
 
-  - name: "drivingOffense"
-    url: "{address}/billing/v2/clients/{clientId}/drivingOffense"
-    scope: "billing:driving-offense-inquiry:get"
-    method: "get"
-    payload:
-      trackId: string
-      mobile: string
-      nationalID: string
-      plateNumber: string
+    - name: "billingInquiry"
+      url: "{address}/billing/v2/clients/{clientId}/billingInquiry"
+      scope: "billing:cc-inquiry:get"
+      method: "get"
+      payload:
+        trackId: string
+        type: string
+        parameter: string
+        secondParameter: string
 
-  - name: "mobileCardVerification"
-    url: "{address}/kyc/v2/clients/{clientId}/mobileCardVerification"
-    scope: "kyc:mobile-card-verification:post"
-    method: "post"
-    payload:
-      trackId: string
-      mobile: string
-      card: string
+    - name: "drivingOffense"
+      url: "{address}/billing/v2/clients/{clientId}/drivingOffense"
+      scope: "billing:driving-offense-inquiry:get"
+      method: "get"
+      payload:
+        trackId: string
+        mobile: string
+        nationalID: string
+        plateNumber: string
 
-  - name: "guarantyInquiry"
-    url: "{address}/credit/v2/clients/{clientId}/users/{nid}/guarantyInquiry"
-    scope: "credit:cc-guaranty-inquiry:get"
-    method: "get"
-    payload:
-      trackId: string
-      nid: string
+    - name: "mobileCardVerification"
+      url: "{address}/kyc/v2/clients/{clientId}/mobileCardVerification"
+      scope: "kyc:mobile-card-verification:post"
+      method: "post"
+      payload:
+        trackId: string
+        mobile: string
+        card: string
 
-  - name: "token"
-    url: "{address}/dev/v2/oauth2/token"
-    scope: ""
-    method: "post"
-    payload:
-      grant_type: string
-      nid: string
-      scopes: string
+    - name: "guarantyInquiry"
+      url: "{address}/credit/v2/clients/{clientId}/users/{nid}/guarantyInquiry"
+      scope: "credit:cc-guaranty-inquiry:get"
+      method: "get"
+      payload:
+        trackId: string
+        nid: string
 
-  # From first 25 Services [Client Credential ones]
-  - name: "balance"
-    url: "{address}/oak/v2/clients/{clientId}/card/balance"
-    scope: "oak:card-balance:get"
-    method: "post"
-    payload:
-      trackId: string
-      card: string
+    - name: "token"
+      url: "{address}/dev/v2/oauth2/token"
+      scope: ""
+      method: "post"
+      payload:
+        grant_type: string
+        nid: string
+        scopes: string
 
-  - name: "statement"
-    url: "{address}/oak/v2/clients/{clientId}/card/statement"
-    scope: "oak:card-statement:get"
-    method: "post"
-    payload:
-      trackId: string
-      card: string
-      fromDate: string
-      toDate: string
+    # From first 25 Services [Client Credential ones]
+    - name: "balance"
+      url: "{address}/oak/v2/clients/{clientId}/card/balance"
+      scope: "oak:card-balance:get"
+      method: "post"
+      payload:
+        trackId: string
+        card: string
 
-  - name: "iban"
-    url: "{address}/oak/v2/clients/{clientId}/iban"
-    scope: "oak:deposit-to-iban:get"
-    method: "get"
-    payload:
-      trackId: string
-      bank: string
-      deposit: string
+    - name: "statement"
+      url: "{address}/oak/v2/clients/{clientId}/card/statement"
+      scope: "oak:card-statement:get"
+      method: "post"
+      payload:
+        trackId: string
+        card: string
+        fromDate: string
+        toDate: string
 
-  - name: "ibanInquiry"
-    url: "{address}/oak/v2/clients/{clientId}/ibanInquiry"
-    scope: "oak:iban-inquiry:get"
-    method: "get"
-    payload:
-      trackId: string
-      iban: string
+    - name: "iban"
+      url: "{address}/oak/v2/clients/{clientId}/iban"
+      scope: "oak:deposit-to-iban:get"
+      method: "get"
+      payload:
+        trackId: string
+        bank: string
+        deposit: string
 
-  - name: "groupIbanInquiry"
-    url: "{address}/oak/v2/clients/{clientId}/groupIbanInquiry"
-    scope: "oak:group-iban-inquiry:post"
-    method: "post"
-    payload:
-      trackId: string
-      ibansFile: string
-      retry: string
-      inquiryTrackId: string
+    - name: "ibanInquiry"
+      url: "{address}/oak/v2/clients/{clientId}/ibanInquiry"
+      scope: "oak:iban-inquiry:get"
+      method: "get"
+      payload:
+        trackId: string
+        iban: string
 
-  - name: "cifInquiry"
-    url: "{address}/oak/v2/clients/{clientId}/users/{nid}/cifInquiry"
-    scope: "oak:cif-inquiry:get"
-    method: "get"
-    payload:
-      trackId: string
-      nid: string
+    - name: "groupIbanInquiry"
+      url: "{address}/oak/v2/clients/{clientId}/groupIbanInquiry"
+      scope: "oak:group-iban-inquiry:post"
+      method: "post"
+      payload:
+        trackId: string
+        ibansFile: string
+        retry: string
+        inquiryTrackId: string
 
-  - name: "blacklistInquiry"
-    url: "{address}/oak/v2/clients/{clientId}/blacklistInquiry"
-    scope: "oak:blacklist-inquiry:get"
-    method: "get"
-    payload:
-      trackId: string
-      nid: string
+    - name: "cifInquiry"
+      url: "{address}/oak/v2/clients/{clientId}/users/{nid}/cifInquiry"
+      scope: "oak:cif-inquiry:get"
+      method: "get"
+      payload:
+        trackId: string
+        nid: string
 
-  - name: "proxyAccountInquiry"
-    url: "{address}/oak/v2/clients/{clientId}/proxyAccountInquiry"
-    scope: "oak:proxy-account-inquiry:execute"
-    method: "get"
-    payload:
-      trackId: string
-      accountNumber: string
+    - name: "blacklistInquiry"
+      url: "{address}/oak/v2/clients/{clientId}/blacklistInquiry"
+      scope: "oak:blacklist-inquiry:get"
+      method: "get"
+      payload:
+        trackId: string
+        nid: string
 
-  # Services based on card
-  # TODO: Note: card is in url, i did not handle this in client sdk code
-  - name: "cards"
-    url: "{address}/mpg/v2/clients/{clientId}/cards/{card}?trackId={trackId}"
-    scope: "card:information:get"
-    method: ""
-    payload:
-      trackId: string
-      card: string
+    - name: "proxyAccountInquiry"
+      url: "{address}/oak/v2/clients/{clientId}/proxyAccountInquiry"
+      scope: "oak:proxy-account-inquiry:execute"
+      method: "get"
+      payload:
+        trackId: string
+        accountNumber: string
 
-  # Services based on credit
-  # TODO: Note: loanId in url, i did not handle this in client sdk code
-  - name: "loans"
-    url: "{address}/credit/v2/clients/{clientId}/loans/{loanId}?trackId={trackId}"
-    scope: "credit:loan-info:get"
-    method: "get"
-    payload:
-      trackId: string
-      loanId: string
+    # Services based on card
+    # TODO: Note: card is in url, i did not handle this in client sdk code
+    - name: "cards"
+      url: "{address}/mpg/v2/clients/{clientId}/cards/{card}?trackId={trackId}"
+      scope: "card:information:get"
+      method: ""
+      payload:
+        trackId: string
+        card: string
 
-  - name: "guaranteeCollaterals"
-    url: "{address}/credit/v2/clients/{clientId}/guaranteeCollaterals?trackId={trackId}&guaranteeId={guaranteeId}"
-    scope: "credit:guarantee-collaterals:get"
-    method: "get"
-    payload:
-      trackId: string
-      guaranteeId: string
+    # Services based on credit
+    # TODO: Note: loanId in url, i did not handle this in client sdk code
+    - name: "loans"
+      url: "{address}/credit/v2/clients/{clientId}/loans/{loanId}?trackId={trackId}"
+      scope: "credit:loan-info:get"
+      method: "get"
+      payload:
+        trackId: string
+        loanId: string
 
-  - name: "guaranteeDetails"
-    url: "{address}/credit/v2/clients/{clientId}/guaranteeDetails?trackId={trackId}&guaranteeId={guaranteeId"
-    scope: "credit:guarantee-details:get"
-    method: "get"
-    payload:
-      trackId: string
-      guaranteeId: string
+    - name: "guaranteeCollaterals"
+      url: "{address}/credit/v2/clients/{clientId}/guaranteeCollaterals?trackId={trackId}&guaranteeId={guaranteeId}"
+      scope: "credit:guarantee-collaterals:get"
+      method: "get"
+      payload:
+        trackId: string
+        guaranteeId: string
 
-  # What is this, has two versions!
-  #  - name: "scoreReport"
-  #    url: "{address}/credit/v2/clients/{clientId}/scoreReport/send?trackId={trackId}"
-  #    scope: "credit:score-request:post"
-  #    method: "post"
-  #    payload:
-  #      trackId: string
-  #      realPersonNationalCode: string
-  #      mobileNumber: string
-  #      legalPersonNationalCode: string
+    - name: "guaranteeDetails"
+      url: "{address}/credit/v2/clients/{clientId}/guaranteeDetails?trackId={trackId}&guaranteeId={guaranteeId"
+      scope: "credit:guarantee-details:get"
+      method: "get"
+      payload:
+        trackId: string
+        guaranteeId: string
 
-  - name: "macnaInquiry"
-    url: "{address}/credit/v2/clients/{clientId}/macnaInquiry?trackId={trackId}&nationalCode={nationalCode}"
-    scope: "credit:macna-inquiry:get"
-    method: "get"
-    payload:
-      trackId: string
-      nationalCode: string
+    # What is this, has two versions!
+    #  - name: "scoreReport"
+    #    url: "{address}/credit/v2/clients/{clientId}/scoreReport/send?trackId={trackId}"
+    #    scope: "credit:score-request:post"
+    #    method: "post"
+    #    payload:
+    #      trackId: string
+    #      realPersonNationalCode: string
+    #      mobileNumber: string
+    #      legalPersonNationalCode: string
+
+    - name: "macnaInquiry"
+      url: "{address}/credit/v2/clients/{clientId}/macnaInquiry?trackId={trackId}&nationalCode={nationalCode}"
+      scope: "credit:macna-inquiry:get"
+      method: "get"
+      payload:
+        trackId: string
+        nationalCode: string

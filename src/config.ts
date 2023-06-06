@@ -20,7 +20,10 @@ export interface Config {
         stagingAddress: string;
         sandboxAddress: string;
     },
-    services: Service[]
+    services: {
+        code: Service[],
+        clientCredential: Service[],
+    }
 }
 
 function readYmlFile(): Config {
@@ -49,7 +52,12 @@ const url =
             ymlServicesConfig.main.address;
 
 
-ymlServicesConfig.services.map(service => {
+const services = [
+    ...ymlServicesConfig.services.code,
+    ...ymlServicesConfig.services.clientCredential,
+];
+
+services.map(service => {
     service.url = service.url.replace('{clientId}', clientId as string);
     service.url = service.url.replace('{address}', url);
 });
