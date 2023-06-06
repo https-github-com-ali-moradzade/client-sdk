@@ -60,7 +60,31 @@ export async function restClient(service: Service) {
         }
     } as AxiosRequestConfig;
 
-    const result = await axios.request(config);
+    let result = await axios.request(config);
+
+    if (
+        result.status === 400 &&
+        result.data?.status === 'FAILED' &&
+        result.data?.error?.code === 'VALIDATION_ERROR' &&
+        result.data?.error?.message === 'invalid token'
+    ) {
+        const {token} = await getClientCredentialToken(currentService.scope);
+
+        if (token) {
+            await setTokenInRedis(currentService.scope, token);
+        } else {
+            throw new Error(`Error getting token for scope: ${currentService.scope}`)
+        }
+
+        // retry the request
+        result = await axios.request({
+            ...config,
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+    }
+
     return {
         status: result.status,
         data: result.data

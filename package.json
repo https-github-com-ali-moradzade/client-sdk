@@ -9,7 +9,7 @@
     "build": "tsc",
     "start:run": "node dest/index.js",
     "start": "npm run build && npm run start:run",
-    "test": "vitest --run --reporter verbose"
+    "test": "npm run build && vitest --run --reporter verbose"
   },
   "files": [
     "dest/**/*",
