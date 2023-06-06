@@ -1,29 +1,17 @@
-import {readYmlFile} from "./util/readYml";
+import {config} from "./util/readYml";
 import {createLogger} from "./util/logger";
 import {CLIENT_SDK} from "./config";
 import {validatePayload} from "./util/validatePayload";
 import {restClient} from "./util/restClient";
 
 const logger = createLogger();
-const config = readYmlFile();
 
 export class ClientSDK {
-    private url = '';
-
-    constructor(useSandbox?: boolean) {
+    constructor() {
         // Replace placeholders in config file
         config.services.map(service => {
             service.url = service.url.replace('{clientId}', CLIENT_SDK.config.clientId as string);
-
-            if (CLIENT_SDK.developmentMode) {
-                this.url = config.main.stagingAddress;
-            } else if (useSandbox) {
-                this.url = config.main.sandboxAddress;
-            } else {
-                this.url = config.main.address;
-            }
-
-            service.url = service.url.replace('{address}', this.url);
+            service.url = service.url.replace('{address}', CLIENT_SDK.config.url);
         });
     }
 
@@ -49,6 +37,6 @@ export class ClientSDK {
             service: service
         }, 'Service url and payload are ready ..');
 
-        return await restClient(this.url, service);
+        return await restClient(service);
     }
 }

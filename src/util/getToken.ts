@@ -8,7 +8,7 @@ import {createLogger} from "./logger";
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 const logger = createLogger();
 
-export async function getToken(address: string, scope: string) {
+export async function getToken(scope: string) {
     const data = JSON.stringify({
         grant_type: 'client_credentials',
         nid: CLIENT_SDK.config.clientNid,
@@ -22,18 +22,18 @@ export async function getToken(address: string, scope: string) {
         },
         headers: {
             'Content-Type': 'application/json',
-        }
+        },
     } as AxiosRequestConfig;
 
     let result;
     try {
-        result = await axios.post(`${address}/dev/v2/oauth2/token`, data, config);
+        result = await axios.post(`${CLIENT_SDK.config.url}/dev/v2/oauth2/token`, data, config);
     } catch (error) {
         logger.info({
             errorData: (error as AxiosError).response?.data,
             errorStatus: (error as AxiosError).response?.status,
         }, `getToken -- failed to get token for scope ${scope}`);
-        
+
         return undefined;
     }
 

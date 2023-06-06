@@ -1,7 +1,6 @@
 import fs from "fs";
 import * as yaml from "js-yaml";
 import {createLogger} from "./logger";
-import {CLIENT_SDK} from "../config";
 
 const logger = createLogger();
 
@@ -25,8 +24,8 @@ export interface Config {
     services: Service[]
 }
 
-export function readYmlFile(): Config {
-    const filePath = CLIENT_SDK.config.ymlFilePath;
+function readYmlFile(): Config {
+    const filePath = __dirname + '/../config.yaml';
 
     try {
         let fileContents = fs.readFileSync(filePath, 'utf8');
@@ -38,3 +37,7 @@ export function readYmlFile(): Config {
         throw new Error(`Failed to load config from specified yaml file`);
     }
 }
+
+const config = readYmlFile();
+
+export {config}

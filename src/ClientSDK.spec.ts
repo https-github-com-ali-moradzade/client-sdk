@@ -3,20 +3,19 @@ import {ClientSDK} from "./ClientSDK";
 
 import * as dotenv from 'dotenv';
 import {v4 as uuid} from 'uuid';
-import exp = require("constants");
 
 dotenv.config();
 
 it("should be able to create a ClientSDK instance", () => {
-    const clientSDK = new ClientSDK(true);
+    const clientSDK = new ClientSDK();
     expect(clientSDK).toBeDefined();
 });
 
 describe('E2E Tests', () => {
-    let clientSDK = new ClientSDK(true);
+    let clientSDK = new ClientSDK();
 
     beforeEach(() => {
-        clientSDK = new ClientSDK(true);
+        clientSDK = new ClientSDK();
     });
 
     describe('callService()', () => {
@@ -47,8 +46,6 @@ describe('E2E Tests', () => {
                         status: string
                     }
                 };
-
-                console.log(result)
 
                 // Assert
                 expect(result.data.status).toEqual('DONE');

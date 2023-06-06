@@ -8,9 +8,8 @@ import {createLogger} from "./logger";
  * TODO: Remove this line after tls problem solved
  */
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-const logger = createLogger();
 
-let currentUrl = '';
+const logger = createLogger();
 let currentService: Service;
 
 axios.interceptors.response.use((response: AxiosResponse) => {
@@ -22,7 +21,7 @@ axios.interceptors.response.use((response: AxiosResponse) => {
     }, 'interceptor -- error -- response');
 
     if (error.response.status === 401 || error.response.status === 403) {
-        const token = await getToken(currentUrl, currentService.scope);
+        const token = await getToken(currentService.scope);
         if (token) {
             await setTokenInRedis(currentService.scope, token);
 
@@ -35,8 +34,7 @@ axios.interceptors.response.use((response: AxiosResponse) => {
     return error;
 });
 
-export async function restClient(url: string, service: Service) {
-    currentUrl = url;
+export async function restClient(service: Service) {
     currentService = service;
 
     const method = service.method;
