@@ -13,11 +13,12 @@
   },
   "files": [
     "dest/**/*",
-    "config.yaml"
+    "config.yaml",
+    ".env.example"
   ],
   "prepare": "npm run build",
   "prepublishOnly": "npm run test",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "postversion": "git push && git push --tags",
   "repository": {
     "type": "git",
