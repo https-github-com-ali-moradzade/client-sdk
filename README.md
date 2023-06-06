@@ -18,7 +18,7 @@ You can create a new client with the following code:
 ```typescript
 import {ClientSDK} from "./ClientSDK";
 
-const clientSDK = new ClientSDK(); // to use sandbox url: new ClientSDK(true);
+const clientSDK = new ClientSDK(); // to use staging url: new ClientSDK(true);
 ```
 
 You should configure .env file before using client:
@@ -37,8 +37,8 @@ REDIS_PORT="6379"
 LOG_PATH="/var/tmp/ClientSDK.log"
 ```
 
-`CLIENT_ID` is the client id which you get from [Finnotech](https://finnotech.ir/clients), in applications section.  
-`CLIENT_PASSWORD` is the client password which you get from [Finnotech](https://finnotech.ir/clients), in applications
+`CLIENT_ID` is the client id which you get from [Finnotech](https://console.finnotech.ir/reportLogin), in applications section.  
+`CLIENT_PASSWORD` is the client password which you get from [Finnotech](https://console.finnotech.ir/reportLogin), in applications
 section.  
 `CLIENT_NID` is the client nid
 
@@ -125,8 +125,7 @@ npm run test
 
 Client sdk tests are in `ClientSDK.spec.ts` file.
 
-Note: Be sure that you have `redis` installed and running on `redis://localhost:6379`, if you don't pass `redisUrl` to
-the client.
+Note: If you did not pass `redisUrl` to the client, Be sure that you have `redis` installed and running on `redis://localhost:6379`.
 
 ## Logging
 
