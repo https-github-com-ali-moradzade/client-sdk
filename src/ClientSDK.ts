@@ -1,5 +1,5 @@
 import {createLogger} from "./util/logger";
-import {validatePayload} from "./util/validatePayload";
+import {validatePayload} from "./util/validation";
 import {acRestClient, ccRestClient} from "./util/restClient";
 
 const logger = createLogger();
@@ -11,13 +11,15 @@ export class ClientSDK {
      * @param payload
      */
     async callService(serviceName: string, payload: any) {
-        // TODO: add validation to check service is actually cc
         logger.info(`callService -- Calling service ${serviceName} ..`);
 
-        const service = validatePayload(serviceName, payload);
+        const {service, type} = validatePayload(serviceName, payload);
+        if (type !== 'CLIENT-CREDENTIAL') {
+            throw new Error(`You can not use callService with ${'CODE'} type services`)
+        }
 
         logger.info({
-            service: service
+            service
         }, 'Service validated successfully ..');
 
         return await ccRestClient(service);
@@ -35,12 +37,12 @@ export class ClientSDK {
     async callServiceByRefreshToken(serviceName: string, payload: any, refreshToken: string, bank?: string) {
         logger.info(`callServiceByRefreshToken -- Calling service ${serviceName} ..`);
 
-        const service = validatePayload(serviceName, payload);
+        const {service, type} = validatePayload(serviceName, payload);
 
         logger.info({
             service: service
         }, 'Service validated successfully ..');
 
-        return await acRestClient(service, refreshToken, bank)
+        return await acRestClient(service, type, refreshToken, bank)
     }
 }

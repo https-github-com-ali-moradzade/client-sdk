@@ -1,16 +1,29 @@
 import {CLIENT_SDK, Service} from "../config";
 
-export function validatePayload(serviceName: string, payload: any): Service {
-    const services = [
-        ...CLIENT_SDK.ymlServicesConfig.services.code,
-        ...CLIENT_SDK.ymlServicesConfig.services.clientCredential,
-    ];
+export function findService(serviceName: string): { service: Service; type: string } {
+    let service: Service | undefined;
 
-    const ourService = services.find(s => s.name === serviceName);
-
-    if (!ourService) {
-        throw new Error(`Service ${serviceName} not found in config file`);
+    service = CLIENT_SDK.ymlServicesConfig.services.code.find((service) => service.name === serviceName)
+    if (service) {
+        return {
+            service,
+            type: 'CODE',
+        }
     }
+
+    service = CLIENT_SDK.ymlServicesConfig.services.clientCredential.find((service) => service.name === serviceName)
+    if (service) {
+        return {
+            service,
+            type: 'CLIENT-CREDENTIAL',
+        }
+    }
+
+    throw new Error(`Service ${serviceName} not found in config file`);
+}
+
+export function validatePayload(serviceName: string, payload: any): { service: Service, type: string } {
+    const {service: ourService, type} = findService(serviceName);
 
     // Check for required parameters
     // trackId is optional in get, and required in post
@@ -29,7 +42,10 @@ export function validatePayload(serviceName: string, payload: any): Service {
     // Replace service payload, with payload
     ourService.payload = payload;
 
-    return ourService;
+    return {
+        service: ourService,
+        type,
+    }
 }
 
 function haveSameKeys(obj1: any, obj2: any) {

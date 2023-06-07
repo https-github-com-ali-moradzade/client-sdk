@@ -1,7 +1,8 @@
 import {describe, expect, it} from "vitest";
 import {acRestClient, ccRestClient} from "./restClient";
 import {setTokenInRedis} from "../redis/queries";
-import {validatePayload} from "./validatePayload";
+import {validatePayload} from "./validation";
+
 
 describe('restClient', () => {
     describe('ccRestClient', () => {
@@ -13,12 +14,13 @@ describe('restClient', () => {
                 plateNumber: '500734744',
                 nationalID: '0440299705',
             }
-            const service = validatePayload(serviceName, payload);
+            const {service, type} = validatePayload(serviceName, payload);
 
             // Act
             const result = await ccRestClient(service);
 
             // Assert
+            expect(type).toEqual('CLIENT-CREDENTIAL')
             expect(result).toBeDefined();
             expect(result.status).toBeTypeOf('number');
             expect(result.data).toBeDefined();
@@ -32,13 +34,15 @@ describe('restClient', () => {
                 plateNumber: '500734744',
                 nationalID: '0440299705',
             }
-            const service = validatePayload(serviceName, payload);
+
+            const {service, type} = validatePayload(serviceName, payload);
 
             // Act
             await setTokenInRedis(service.scope, '');
             const result = await ccRestClient(service);
 
             // Assert
+            expect(type).toEqual('CLIENT-CREDENTIAL')
             expect(result).toBeDefined();
             expect(result.status).toBeTypeOf('number');
             expect(result.data).toBeDefined();
@@ -50,20 +54,21 @@ describe('restClient', () => {
     })
 
     describe('acRestClient', () => {
-        // TODO: test this
+        // TODO: write more and specific tests
         it.skip('should correctly call a ac service', async () => {
             // Arrange
             const serviceName = 'proxyInquiry';
             const payload = {
                 inquiryTrackId: 'put inquiryTrackId',
             }
-            const service = validatePayload(serviceName, payload);
+            const {service, type} = validatePayload(serviceName, payload);
             const refreshToken = 'put refresh token'
 
             // Act
-            const result = await acRestClient(service, refreshToken);
+            const result = await acRestClient(service, type, refreshToken);
 
             // Assert
+            expect(type).toEqual('CODE');
             expect(result).toBeDefined();
             expect(result.status).toBeTypeOf('number');
             expect(result.data).toBeDefined();
@@ -77,13 +82,14 @@ describe('restClient', () => {
                 plateNumber: '500734744',
                 nationalID: '0440299705',
             }
-            const service = validatePayload(serviceName, payload);
-            const refreshToken = 'put refresh token'
+            const {service, type} = validatePayload(serviceName, payload);
+            const refreshToken = 'put your refresh token'
 
             // Act
-            const result = await acRestClient(service, refreshToken);
+            const result = await acRestClient(service, type, refreshToken);
 
             // Assert
+            expect(type).toEqual('CLIENT-CREDENTIAL')
             expect(result).toBeDefined();
             expect(result.status).toBeTypeOf('number');
             expect(result.data).toBeDefined();

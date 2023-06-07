@@ -68,19 +68,6 @@ export async function getTokenByRefreshCode(tokenType: string, refreshToken: str
     let result;
     try {
         result = await axios.request(config);
-
-        if (result.data?.status === "FAILED") {
-            console.log('Error getting token')
-            console.log('Request body:', {
-                tokenType,
-                bank,
-                refreshToken: refreshToken ? refreshToken.slice(0, 10) + '...' : refreshToken
-            })
-
-            throw Error('Error getting token with refresh token')
-        }
-
-        return result.data?.result?.value;
     } catch (error) {
         logger.info({
             errorData: (error as AxiosError).response?.data,
@@ -89,4 +76,17 @@ export async function getTokenByRefreshCode(tokenType: string, refreshToken: str
 
         throw error;
     }
+
+    if (result.data?.status === "FAILED") {
+        console.log('Error getting token')
+        console.log('Request body:', {
+            tokenType,
+            bank,
+            refreshToken: refreshToken ? refreshToken.slice(0, 10) + '...' : refreshToken
+        })
+
+        throw Error('Error getting token with refresh token')
+    }
+
+    return result.data?.result?.value;
 }

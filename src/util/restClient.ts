@@ -1,4 +1,4 @@
-import {CLIENT_SDK, Service} from "../config";
+import {Service} from "../config";
 import {getTokenFromRedis, setTokenInRedis} from "../redis/queries";
 import axios, {AxiosError, AxiosRequestConfig, AxiosResponse} from "axios";
 import {getClientCredentialToken, getTokenByRefreshCode} from "./getToken";
@@ -38,7 +38,7 @@ export async function ccRestClient(service: Service) {
     currentService = service;
 
     const method = service.method;
-    let trackId: string | undefined = undefined;
+    let trackId;
 
     if (service.payload.trackId) {
         trackId = service.payload.trackId;
@@ -79,12 +79,7 @@ export async function ccRestClient(service: Service) {
         result.data?.error?.message === 'invalid token'
     ) {
         const {token} = await getClientCredentialToken(currentService.scope);
-
-        if (token) {
-            await setTokenInRedis(currentService.scope, token);
-        } else {
-            throw new Error(`Error getting token for scope: ${currentService.scope}`)
-        }
+        await setTokenInRedis(currentService.scope, token);
 
         // retry the request
         try {
@@ -110,18 +105,7 @@ export async function ccRestClient(service: Service) {
     }
 }
 
-export async function acRestClient(service: Service, refreshToken: string, bank?: string) {
-    let tokenType: string;
-
-    // Find tokenType based on service
-    let found = CLIENT_SDK.ymlServicesConfig.services.clientCredential.find((s) => s.name === service.name)
-
-    if (found) {
-        tokenType = 'CLIENT-CREDENTIAL'
-    } else {
-        tokenType = 'CODE'
-    }
-
+export async function acRestClient(service: Service, tokenType: string, refreshToken: string, bank?: string) {
     const method = service.method;
     let trackId: string | undefined = undefined;
 
