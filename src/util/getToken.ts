@@ -65,7 +65,6 @@ export async function getTokenByRefreshCode(tokenType: string, refreshToken: str
         data,
     } as AxiosRequestConfig;
 
-    // return await axios.request(config)
     let result;
     try {
         result = await axios.request(config);

@@ -1,7 +1,7 @@
-import {Service} from "../config";
+import {CLIENT_SDK, Service} from "../config";
 import {getTokenFromRedis, setTokenInRedis} from "../redis/queries";
 import axios, {AxiosError, AxiosRequestConfig, AxiosResponse} from "axios";
-import {getClientCredentialToken} from "./getToken";
+import {getClientCredentialToken, getTokenByRefreshCode} from "./getToken";
 import {createLogger} from "./logger";
 
 /**
@@ -34,7 +34,7 @@ axios.interceptors.response.use((response: AxiosResponse) => {
     return error;
 });
 
-export async function restClient(service: Service) {
+export async function ccRestClient(service: Service) {
     currentService = service;
 
     const method = service.method;
@@ -60,7 +60,17 @@ export async function restClient(service: Service) {
         }
     } as AxiosRequestConfig;
 
-    let result = await axios.request(config);
+    let result;
+    try {
+        result = await axios.request(config);
+    } catch (error) {
+        logger.info({
+            errorData: (error as AxiosError).response?.data,
+            errorStatus: (error as AxiosError).response?.status,
+        }, `ccRestClient -- failed to call service: ${service.name}`);
+
+        throw error;
+    }
 
     if (
         result.status === 400 &&
@@ -77,12 +87,21 @@ export async function restClient(service: Service) {
         }
 
         // retry the request
-        result = await axios.request({
-            ...config,
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
+        try {
+            result = await axios.request({
+                ...config,
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+        } catch (error) {
+            logger.info({
+                errorData: (error as AxiosError).response?.data,
+                errorStatus: (error as AxiosError).response?.status,
+            }, `ccRestClient -- retrying request -- failed to call service: ${service.name}`);
+
+            throw error;
+        }
     }
 
     return {
@@ -90,3 +109,57 @@ export async function restClient(service: Service) {
         data: result.data
     }
 }
+
+export async function acRestClient(service: Service, refreshToken: string, bank?: string) {
+    let tokenType: string;
+
+    // Find tokenType based on service
+    let found = CLIENT_SDK.ymlServicesConfig.services.clientCredential.find((s) => s.name === service.name)
+
+    if (found) {
+        tokenType = 'CLIENT-CREDENTIAL'
+    } else {
+        tokenType = 'CODE'
+    }
+
+    const method = service.method;
+    let trackId: string | undefined = undefined;
+
+    if (service.payload.trackId) {
+        trackId = service.payload.trackId;
+        delete service.payload.trackId;
+    }
+
+    const token = await getTokenByRefreshCode(tokenType, refreshToken, bank);
+
+    const config = {
+        url: service.url,
+        headers: {
+            Authorization: `Bearer ${token}`
+        },
+        params: method === 'get' ? service.payload : {trackId},
+        data: method === 'post' ? service.payload : undefined,
+
+        validateStatus: function (status: number) {
+            return !(status === 401 || status == 403);
+        }
+    } as AxiosRequestConfig;
+
+    let result;
+    try {
+        result = await axios.request(config);
+    } catch (error) {
+        logger.info({
+            errorData: (error as AxiosError).response?.data,
+            errorStatus: (error as AxiosError).response?.status,
+        }, `acRestClient -- failed to call service: ${service.name}`);
+
+        throw error;
+    }
+
+    return {
+        status: result.status,
+        data: result.data
+    }
+}
+
