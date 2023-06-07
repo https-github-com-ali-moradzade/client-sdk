@@ -69,6 +69,7 @@ services.map(service => {
 });
 
 export const CLIENT_SDK = {
+    // TODO: moved hardcoded CLIENT_CREDENTIAL & CODE values here
     redis: {
         host: process.env.REDIS_HOST || 'localhost',
         port: parseInt(process.env.REDIS_PORT || '6379')

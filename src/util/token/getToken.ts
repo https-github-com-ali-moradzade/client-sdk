@@ -1,6 +1,6 @@
-import {CLIENT_SDK} from "../config";
+import {CLIENT_SDK} from "../../config";
 import axios, {AxiosError, AxiosRequestConfig} from "axios";
-import {createLogger} from "./logger";
+import {createLogger} from "../logger";
 
 /**
  * TODO: Remove this line after tls problem solved

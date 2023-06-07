@@ -1,4 +1,4 @@
-import {CLIENT_SDK, Service} from "../config";
+import {CLIENT_SDK, Service} from "../../config";
 
 export function findService(serviceName: string): { service: Service; type: string } {
     let service: Service | undefined;

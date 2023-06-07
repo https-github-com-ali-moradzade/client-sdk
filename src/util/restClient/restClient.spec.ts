@@ -1,7 +1,7 @@
 import {describe, expect, it} from "vitest";
 import {acRestClient, ccRestClient} from "./restClient";
-import {setTokenInRedis} from "../redis/queries";
-import {validatePayload} from "./validation";
+import {setTokenInRedis} from "../../redis/queries";
+import {validatePayload} from "../token/validation";
 
 
 describe('restClient', () => {

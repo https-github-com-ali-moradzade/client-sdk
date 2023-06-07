@@ -1,8 +1,8 @@
-import {Service} from "../config";
-import {getTokenFromRedis, setTokenInRedis} from "../redis/queries";
+import {Service} from "../../config";
+import {getTokenFromRedis, setTokenInRedis} from "../../redis/queries";
 import axios, {AxiosError, AxiosRequestConfig, AxiosResponse} from "axios";
-import {getClientCredentialToken, getTokenByRefreshCode} from "./getToken";
-import {createLogger} from "./logger";
+import {getClientCredentialToken, getTokenByRefreshCode} from "../token/getToken";
+import {createLogger} from "../logger";
 
 /**
  * TODO: Remove this line after tls problem solved

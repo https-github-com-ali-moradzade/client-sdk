@@ -1,6 +1,6 @@
 import {createLogger} from "./util/logger";
-import {validatePayload} from "./util/validation";
-import {acRestClient, ccRestClient} from "./util/restClient";
+import {validatePayload} from "./util/token/validation";
+import {acRestClient, ccRestClient} from "./util/restClient/restClient";
 
 const logger = createLogger();
 
