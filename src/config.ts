@@ -62,6 +62,12 @@ services.map(service => {
     service.url = service.url.replace('{address}', url);
 });
 
+services.map(service => {
+    if (service.url.includes('{nid}')) {
+        service.url = service.url.replace('{nid}', clientNid as string);
+    }
+});
+
 export const CLIENT_SDK = {
     redis: {
         host: process.env.REDIS_HOST || 'localhost',

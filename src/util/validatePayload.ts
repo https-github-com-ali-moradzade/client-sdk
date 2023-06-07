@@ -26,6 +26,9 @@ export function validatePayload(serviceName: string, payload: any): Service {
         throw new Error(`Invalid payload for service: ${serviceName}`);
     }
 
+    // Replace service payload, with payload
+    ourService.payload = payload;
+
     return ourService;
 }
 
