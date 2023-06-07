@@ -1,5 +1,6 @@
 import {describe, expect, it} from "vitest";
 import {findService, validatePayload} from "./validation";
+import {CLIENT_SDK} from "../../config";
 
 describe('validation', () => {
     describe('findService', () => {
@@ -23,7 +24,7 @@ describe('validation', () => {
 
             // Assert
             expect(service).toBeDefined();
-            expect(type).toEqual('CODE');
+            expect(type).toEqual(CLIENT_SDK.services.AC);
         })
 
         it('should be able to find cc service', () => {
@@ -35,7 +36,7 @@ describe('validation', () => {
 
             // Assert
             expect(service).toBeDefined();
-            expect(type).toEqual('CLIENT-CREDENTIAL');
+            expect(type).toEqual(CLIENT_SDK.services.CC);
         });
     })
 

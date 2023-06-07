@@ -7,7 +7,7 @@ export function findService(serviceName: string): { service: Service; type: stri
     if (service) {
         return {
             service,
-            type: 'CODE',
+            type: CLIENT_SDK.services.AC,
         }
     }
 
@@ -15,7 +15,7 @@ export function findService(serviceName: string): { service: Service; type: stri
     if (service) {
         return {
             service,
-            type: 'CLIENT-CREDENTIAL',
+            type: CLIENT_SDK.services.CC,
         }
     }
 

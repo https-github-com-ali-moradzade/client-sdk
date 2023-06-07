@@ -1,6 +1,7 @@
 import {createLogger} from "./util/logger";
 import {validatePayload} from "./util/token/validation";
 import {acRestClient, ccRestClient} from "./util/restClient/restClient";
+import {CLIENT_SDK} from "./config";
 
 const logger = createLogger();
 
@@ -14,8 +15,8 @@ export class ClientSDK {
         logger.info(`callService -- Calling service ${serviceName} ..`);
 
         const {service, type} = validatePayload(serviceName, payload);
-        if (type !== 'CLIENT-CREDENTIAL') {
-            throw new Error(`You can not use callService with ${'CODE'} type services`)
+        if (type !== CLIENT_SDK.services.CC) {
+            throw new Error(`You can not use callService with ${CLIENT_SDK.services.AC} type services`)
         }
 
         logger.info({

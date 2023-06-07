@@ -2,6 +2,7 @@ import {describe, expect, it} from "vitest";
 import {acRestClient, ccRestClient} from "./restClient";
 import {setTokenInRedis} from "../../redis/queries";
 import {validatePayload} from "../token/validation";
+import {CLIENT_SDK} from "../../config";
 
 
 describe('restClient', () => {
@@ -20,7 +21,7 @@ describe('restClient', () => {
             const result = await ccRestClient(service);
 
             // Assert
-            expect(type).toEqual('CLIENT-CREDENTIAL')
+            expect(type).toEqual(CLIENT_SDK.services.CC);
             expect(result).toBeDefined();
             expect(result.status).toBeTypeOf('number');
             expect(result.data).toBeDefined();
@@ -42,7 +43,7 @@ describe('restClient', () => {
             const result = await ccRestClient(service);
 
             // Assert
-            expect(type).toEqual('CLIENT-CREDENTIAL')
+            expect(type).toEqual(CLIENT_SDK.services.CC);
             expect(result).toBeDefined();
             expect(result.status).toBeTypeOf('number');
             expect(result.data).toBeDefined();
@@ -68,7 +69,7 @@ describe('restClient', () => {
             const result = await acRestClient(service, type, refreshToken);
 
             // Assert
-            expect(type).toEqual('CODE');
+            expect(type).toEqual(CLIENT_SDK.services.AC);
             expect(result).toBeDefined();
             expect(result.status).toBeTypeOf('number');
             expect(result.data).toBeDefined();
@@ -89,7 +90,7 @@ describe('restClient', () => {
             const result = await acRestClient(service, type, refreshToken);
 
             // Assert
-            expect(type).toEqual('CLIENT-CREDENTIAL')
+            expect(type).toEqual(CLIENT_SDK.services.CC);
             expect(result).toBeDefined();
             expect(result.status).toBeTypeOf('number');
             expect(result.data).toBeDefined();

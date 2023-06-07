@@ -78,8 +78,8 @@ export async function getTokenByRefreshCode(tokenType: string, refreshToken: str
     }
 
     if (result.data?.status === "FAILED") {
-        console.log('Error getting token')
-        console.log('Request body:', {
+        logger.info('Error getting token')
+        logger.info('Request body:', {
             tokenType,
             bank,
             refreshToken: refreshToken ? refreshToken.slice(0, 10) + '...' : refreshToken
